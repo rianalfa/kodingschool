@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Livewire\Dashboard;
+use App\Http\Livewire\Matter\Show;
 use Illuminate\Support\Facades\Route;
+use App\Models\Language;
+use App\Models\Matter;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +21,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/dashboard', function() {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/language/{language}', function(Language $language) {
+        return view('language.show', ['language' => $language]);
+    })->name('language.show');
+
+    Route::get('/matter/{matter}', function(Matter $matter) {
+        return view('matter', ['matter' => $matter]);
+    })->name('matter.show');
+});

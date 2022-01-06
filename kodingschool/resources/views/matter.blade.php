@@ -18,15 +18,10 @@
     </head>
     <body class="font-sans antialiased overflow-y-hidden">
         <x-header.nav title=""></x-header.nav>
-        <div class="flex h-screen bg-gray-100 overflow-y-auto">
-            <div class="flex flex-col flex-1 overflow-x-hidden">
-                <main class="h-full overflow-y-auto pt-4">
-                    <div class="xl:container mb-6 px-4 pb-8 pt-2 md:px-6 lg:px-8 mx-auto">
-                        {{ $slot }}
-                    </div>
-                </main>
-            </div>
+        <div class="flex h-screen bg-gray-100 overflow-y-auto" style="padding-bottom: 40px;">
+            @livewire('matter.show', ['m' => $matter])
         </div>
+        @livewire('matter.footer')
     </body>
     @livewireScripts
     @stack('scripts')
