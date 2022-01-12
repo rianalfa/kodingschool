@@ -18,10 +18,8 @@ class Footer extends Component
 
     public function reload() {
         $this->detail = User::whereId(Auth::user()->id)->first()->detail()->first();
-
         $this->level = $this->detail->level()->first();
-
-        $this->nextLevel = ($this->level->point - ($this->level->point_total - $this->detail->point))/$this->level->point*100;
+        $this->nextLevel = ($this->level->point - ($this->level->point_total - $this->detail->point))/$this->level->point * 100;
     }
 
     public function next() {

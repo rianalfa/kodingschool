@@ -2,7 +2,7 @@
     @foreach ($matters as $matter)
         @if (in_array($matter->id, $availableMatter))
             <x-anchor.white class="text-left font-bold block mb-2 border-b-4 border-b-sky-700 hover:bg-white hover:border-b-sky-500 active:bg-white active:border-b-white focus:border-b-sky-700"
-                href="{{ route('matter.show', ['matter' => $matter]) }}" >
+                href="{{ route('study.matter', $matter) }}" >
                 <div class="grid grid-cols-2">
                     <div>
                         {{ $matter->name }}

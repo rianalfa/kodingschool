@@ -1,4 +1,5 @@
 require('./bootstrap');
+require('@fortawesome/fontawesome-free/js/all.min.js');
 
 import Alpine from 'alpinejs';
 import swal from 'sweetalert2';

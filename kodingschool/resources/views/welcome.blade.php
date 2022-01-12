@@ -23,8 +23,7 @@
 
                         <div class="block mt-4">
                             <label for="remember_me" class="flex items-center">
-                                <x-jet-checkbox id="remember_me" name="remember" />
-                                <span class="ml-2 text-sm text-gray-600">{{ __('Ingat saya') }}</span>
+                                <x-input.checkbox text="{{ __('Ingat saya') }}" id="remember_me" name="remember" />
                             </label>
                         </div>
 

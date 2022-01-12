@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Livewire\Dashboard;
+use App\Http\Livewire\Language\Grid;
+use App\Http\Livewire\Language\Show as LanguageShow;
+use App\Http\Livewire\Leaderboard;
 use App\Http\Livewire\Matter\Show;
 use Illuminate\Support\Facades\Route;
 use App\Models\Language;
@@ -28,18 +31,18 @@ Route::get('/', function () {
     }
 })->name('home');
 
-Route::name('verification.')->group(function() {
-    Route::get('/email/verify', function () {
+Route::group(['prefix' => 'email', 'as' => 'verification.'], function() {
+    Route::get('/verify', function () {
         return view('auth.verify-email');
     })->middleware('auth')->name('notice');
 
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    Route::get('/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 
         return redirect('/dashboard');
     })->middleware(['auth', 'signed'])->name('verify');
 
-    Route::post('/email/verification-notification', function (Request $request) {
+    Route::post('/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
 
         return back()->with('message', 'Verification link sent!');
@@ -47,15 +50,13 @@ Route::name('verification.')->group(function() {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/dashboard', function() {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', Grid::class)->name('dashboard');
 
-    Route::get('/language/{language}', function(Language $language) {
-        return view('language.show', ['language' => $language]);
-    })->name('language.show');
+    Route::name('study.')->group(function() {
+        Route::get('/language/{id}', LanguageShow::class)->name('language');
 
-    Route::get('/matter/{matter}', function(Matter $matter) {
-        return view('matter', ['matter' => $matter]);
-    })->name('matter.show');
+        Route::get('/matter/{id}', Show::class)->name('matter');
+    });
+
+    Route::get('/leaderboard', Leaderboard::class)->name('leaderboard');
 });

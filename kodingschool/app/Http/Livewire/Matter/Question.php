@@ -48,41 +48,44 @@ class Question extends Component
 
             $user = User::whereId(Auth::user()->id)->first();
 
-            Study::where('user_id', $user->id)
-                ->where('matter_id', $this->matter->id)
-                ->update(['user_answer' => $this->question,
-                    'point' => $this->point,
-                ]);
-
-            $result = Result::where('user_id', $user->id)->where('date', date('Y-m-d'))->first();
-
-            if (!empty($result)) {
-                Result::where('user_id', $user->id)
-                        ->where('date', date('Y-m-d'))
-                        ->update(['point' => $result->point + $this->point]);
-            } else {
-                Result::insert([
-                    'user_id' => $user->id,
-                    'point' => $this->point,
-                    'date' => date('Y-m-d'),
-                ]);
-            }
-
             $point = $user->detail()->first()->point;
             $point = $point+$this->point;
 
-            if ($point >= Level::whereId($user->detail()->first()->level_id)->first()->point_total) {
-                $level = Level::where('point_total', '<=', $point)->orderBy('id', 'desc')->first();
+            $study = Study::where('user_id', $user->id)->where('matter_id', $this->matter->id);
 
-                UserDetail::where('user_id', $user->id)->update([
-                    'point' => $point,
-                    'level_id' => $level->id+1,
-                ]);
-            } else {
-                UserDetail::where('user_id', $user->id)->update([
-                    'point' => $point,
-                ]);
+            if ($study->first()->point==0) {
+                $result = Result::where('user_id', $user->id)->where('date', date('Y-m-d'))->first();
+
+                if (!empty($result)) {
+                    Result::where('user_id', $user->id)
+                            ->where('date', date('Y-m-d'))
+                            ->update(['point' => $result->point + $this->point]);
+                } else {
+                    Result::insert([
+                        'user_id' => $user->id,
+                        'point' => $this->point,
+                        'date' => date('Y-m-d'),
+                    ]);
+                }
+
+                if ($point >= Level::whereId($user->detail()->first()->level_id)->first()->point_total) {
+                    $level = Level::where('point_total', '<=', $point)->orderBy('id', 'desc')->first();
+
+                    UserDetail::where('user_id', $user->id)->update([
+                        'point' => $point,
+                        'level_id' => $level->id+1,
+                    ]);
+                } else {
+                    UserDetail::where('user_id', $user->id)->update([
+                        'point' => $point,
+                    ]);
+                }
             }
+
+            $study->update([
+                    'user_answer' => $this->question,
+                    'point' => $this->point,
+                ]);
 
             $this->emitTo('matter.show', 'correctAnswer');
             $this->emitTo('matter.footer', 'reloadLevel');

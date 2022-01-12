@@ -12,7 +12,7 @@
         @endisset
     </div>
     <div
-        {{ $attributes->merge(['class' => 'px-4 py-5 sm:p-6 bg-white sm:rounded-md shadow-md border border-gray-100 text-gray-800 h-full']) }}>
+        {{ $attributes->merge(['class' => 'px-4 py-5 sm:p-6 bg-white sm:rounded-lg shadow-md border border-gray-100 text-gray-800 h-full']) }}>
         {{ $slot }}
     </div>
 </div>

@@ -16,13 +16,16 @@
         <script src="{{ mix('js/app.js') }}" defer></script>
         @stack('styles')
     </head>
-    <body class="font-sans antialiased overflow-y-hidden">
-        @include('sweetalert::alert')
-        <x-header.nav title=""></x-header.nav>
-        <div class="flex h-screen bg-gray-100 overflow-y-auto" style="padding-bottom: 40px;">
-            @livewire('matter.show', ['matter' => $matter])
+    <body class="font-sans antialiased">
+        <div class="flex h-screen bg-gray-100">
+            <div class="flex flex-col flex-1 overflow-hidden">
+                <x-header.nav title=""></x-header.nav>
+
+                {{ $slot }}
+
+                @livewire('matter.footer')
+            </div>
         </div>
-        @livewire('matter.footer')
 
         <script type="text/javascript">
             window.addEventListener('swal',function(e){

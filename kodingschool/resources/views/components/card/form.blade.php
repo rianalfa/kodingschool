@@ -9,18 +9,18 @@
                 </p>
             </div>
         </div>
-    
+
         {{-- content --}}
         <div class="mt-5 lg:mt-0 lg:col-span-2">
-            <div class="px-4 py-5 md:p-6 bg-white shadow md:rounded-md text-gray-800">
+            <div class="px-4 py-5 md:p-6 bg-white shadow md:rounded-lg text-gray-800">
                 {{ $slot }}
             </div>
         </div>
-    
+
         {{-- action --}}
         <div class="mt-5">
-    
+
         </div>
     </div>
-    
+
 </div>

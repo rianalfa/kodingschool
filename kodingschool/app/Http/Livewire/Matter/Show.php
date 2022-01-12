@@ -17,7 +17,8 @@ class Show extends Component
         'correctAnswer' => 'correctAnswer',
     ];
 
-    public function mount() {
+    public function mount($id) {
+        $this->matter = Matter::whereId($id)->first();
         $this->newStudy();
     }
 
@@ -58,6 +59,7 @@ class Show extends Component
 
     public function render()
     {
-        return view('matter.show');
+        return view('matter.show')
+                ->layout('layouts.matter');
     }
 }
