@@ -24,20 +24,29 @@
                         <div class="block mt-4">
                             <label for="remember_me" class="flex items-center">
                                 <x-jet-checkbox id="remember_me" name="remember" />
-                                <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                                <span class="ml-2 text-sm text-gray-600">{{ __('Ingat saya') }}</span>
                             </label>
                         </div>
 
-                        <div class="flex items-center justify-end mt-4">
-                            @if (Route::has('password.request'))
-                                <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
-                                    {{ __('Forgot your password?') }}
-                                </a>
-                            @endif
+                        <div class="grid grid-cols-5 gap-0">
+                            <div class="flex items-center mt-4">
+                                <x-anchor.primary href="{{ route('register') }}">
+                                    {{__('Register')}}
+                                </x-anchor.primary>
+                            </div>
+                            <div class="col-span-4">
+                                <div class="flex items-center justify-end mt-4">
+                                    @if (Route::has('password.request'))
+                                        <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
+                                            {{ __('Lupa password?') }}
+                                        </a>
+                                    @endif
 
-                            <x-jet-button class="ml-4">
-                                {{ __('Log in') }}
-                            </x-jet-button>
+                                    <x-button.black type="submit" class="ml-4">
+                                        {{ __('Log in') }}
+                                    </x-button.black>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

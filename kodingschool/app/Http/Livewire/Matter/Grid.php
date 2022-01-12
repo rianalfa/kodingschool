@@ -10,36 +10,47 @@ use Illuminate\Support\Facades\Auth;
 class Grid extends Component
 {
     public $chapter;
-    public $availableMatter;
+    private $availableMatter = [];
     private $matters;
 
     protected $listeners = [
         'reloadMatters' => 'reload',
     ];
 
-    public function mount() {
-        $this->matters = Chapter::find($this->chapter)->matters()->get();
-    }
-
-    public function reload($chapter) {
-        $this->matters = Chapter::find($chapter)->matters()->get();
-        $this->chapter = $chapter;
+    public function reload() {
+        $this->matters = Chapter::whereId($this->chapter)->first()->matters()->get();
 
         $studies = DB::table('studies')
-            ->select('matters.number')
-            ->leftJoin('matters', 'studies.matter_id', '=', 'matters.id')
-            ->orderBy('matters.number', 'desc')
-            ->where('matters.chapter_id', '=', $chapter)
-            ->where('studies.user_id', '=', Auth::user()->id)
-            ->get();
+                    ->select('matters.id')
+                    ->leftJoin('matters', 'studies.matter_id', '=', 'matters.id')
+                    ->where('matters.chapter_id', '=', $this->chapter)
+                    ->where('studies.user_id', '=', Auth::user()->id)
+                    ->orderBy('matters.number', 'asc')
+                    ->get();
 
-        $this->availableMatter = (sizeof($studies) == 0) ? 1 : $studies[0]->number;
+        if (!empty($studies)) {
+            foreach ($studies as $study) {
+                array_push($this->availableMatter, $study->id);
+            }
+        } else {
+            $this->availableMatter = [1];
+        }
     }
 
     public function render()
     {
+        $this->reload();
         return view('matter.grid', [
             'matters' => $this->matters,
+            'availableMatter' => $this->availableMatter
+        ]);
+    }
+
+    public function matterNotAvailable() {
+        $this->dispatchBrowserEvent('swal', [
+            'icon' => 'error',
+            'title' => '',
+            'text' => 'Maaf, materi ini belum tersedia untukmu! Silahkan arungi materi secara bertahap!',
         ]);
     }
 }

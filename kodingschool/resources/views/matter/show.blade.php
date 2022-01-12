@@ -11,10 +11,6 @@
 
         @if (!empty($matter->instruction))
             @livewire('matter.question', ['matter' => $matter])
-
-            <div>
-                {{ $matter->name }}
-            </div>
         @endif
     </div>
 </div>

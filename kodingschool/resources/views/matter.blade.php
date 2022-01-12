@@ -17,12 +17,19 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased overflow-y-hidden">
+        @include('sweetalert::alert')
         <x-header.nav title=""></x-header.nav>
         <div class="flex h-screen bg-gray-100 overflow-y-auto" style="padding-bottom: 40px;">
-            @livewire('matter.show', ['m' => $matter])
+            @livewire('matter.show', ['matter' => $matter])
         </div>
         @livewire('matter.footer')
+
+        <script type="text/javascript">
+            window.addEventListener('swal',function(e){
+                Swal.fire(e.detail);
+            });
+        </script>
+        @livewireScripts
+        @stack('scripts')
     </body>
-    @livewireScripts
-    @stack('scripts')
 </html>

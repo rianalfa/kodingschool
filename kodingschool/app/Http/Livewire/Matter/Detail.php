@@ -8,10 +8,9 @@ use Livewire\Component;
 class Detail extends Component
 {
     public $matter;
-    public $chapter;
 
     protected $listeners = [
-        'reloadMatterDetail' => 'reload'
+        'reloadMatterDetail' => 'reload',
     ];
 
     public function mount() {
@@ -41,18 +40,15 @@ class Detail extends Component
         $this->matter->codeInstruction = $this->getCode($this->matter->instruction);
         $this->matter->instruction = explode("```", $this->matter->instruction);
         $this->matter->matter = explode ("```", $this->matter->matter);
-        $this->chapter = $this->matter->chapter()->first();
     }
 
     public function reload($id) {
-        $this->matter = Matter::find($id)->first();
+        $this->matter = Matter::whereId($id)->first();
         $this->matterCode();
     }
 
     public function render()
     {
-        return view('matter.detail', [
-            'matter' => $this->matter,
-        ]);
+        return view('matter.detail');
     }
 }

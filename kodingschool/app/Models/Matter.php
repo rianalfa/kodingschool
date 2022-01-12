@@ -24,12 +24,28 @@ class Matter extends Model
         'number',
     ];
 
-    public static function next($id, $chapter) {
-        return Matter::query()
-                    ->orderBy('id', 'asc')
-                    ->where('id', '>', $id)
-                    ->where('chapter_id', $chapter)
-                    ->first();
+    public static function next($number, $chapter) {
+        if ($number == Matter::where('chapter_id', $chapter)->orderBy('number', 'desc')->first()->number) {
+            $chapter = Chapter::whereId($chapter)->first();
+
+            if ($chapter->number == Chapter::where('language_id', $chapter->language_id)->orderBy('number', 'desc')->first()->number) {
+                return "finished";
+            } else {
+                $chapter = Chapter::where('language_id', $chapter->language()->first()->id)
+                                ->where('number', '>', $chapter->number)
+                                ->orderBy('number', 'asc')
+                                ->first();
+
+                return Matter::where('chapter_id', $chapter->id)
+                            ->orderBy('number', 'asc')
+                            ->first();
+            }
+        } else {
+            return Matter::where('number', '>', $number)
+                        ->where('chapter_id', $chapter)
+                        ->orderBy('number', 'asc')
+                        ->first();
+        }
     }
 
     public function difficulty() {

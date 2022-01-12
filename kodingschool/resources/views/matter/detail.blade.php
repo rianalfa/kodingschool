@@ -1,5 +1,5 @@
 <div class="bg-sky-100 max-h-full overflow-y-auto p-5">
-    <p class="text-sm text-gray-400 mb-0">{{ $chapter->name }}</p>
+    <p class="text-sm text-gray-400 mb-0">{{ $matter->chapter()->first()->name }}</p>
     <p class="text-sky-700 font-bold text-2xl mb-3">{{ $matter->name }}</p>
 
     @foreach ($matter->matter as $m)

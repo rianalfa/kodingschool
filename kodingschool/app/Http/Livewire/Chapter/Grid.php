@@ -13,9 +13,6 @@ class Grid extends Component
     public $language;
     private $chapters;
 
-    public $ch = '';
-    public $show = false;
-
     protected $listeners = [
         'reloadChapters' => 'reload'
     ];
@@ -30,16 +27,5 @@ class Grid extends Component
         return view('chapter.grid', [
             'chapters' => $this->chapters,
         ]);
-    }
-
-    public function show($chapter) {
-        if ($this->ch==$chapter && $this->show==true) {
-            $this->ch = '';
-            $this->show = false;
-        } else {
-            $this->ch = $chapter;
-            $this->show = true;
-            $this->emitTo('matter.grid', 'reloadMatters', $chapter);
-        }
     }
 }

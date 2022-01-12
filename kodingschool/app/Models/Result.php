@@ -14,4 +14,6 @@ class Result extends Model
         'point',
         'date',
     ];
+
+    public $timestamps = false;
 }
