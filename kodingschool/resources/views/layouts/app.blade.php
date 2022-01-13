@@ -28,9 +28,21 @@
             </div>
         </div>
 
+        @livewire('livewire-ui-modal')
+
         <script type="text/javascript">
-            window.addEventListener('swal',function(e){
+            window.addEventListener('swal',function(e) {
+                console.log(e.detail);
+
                 Swal.fire(e.detail);
+            });
+
+            window.addEventListener('modal', function(e) {
+                if (e.detail.type=='open') {
+                    document.getElementById(e.detail.id).style.display='block';
+                } else {
+                    document.getElementById(e.detail.id).style.display='none';
+                }
             });
         </script>
         @livewireScripts

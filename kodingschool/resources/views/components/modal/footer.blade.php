@@ -1,9 +1,5 @@
-@props(['bordered' => false])
-
-@if ($bordered)
-    <div class="border-t border-gray-200" />
-@endif
-
-<div class="flex justify-center md:justify-end items-center px-5 mb-3 mt-1 text-gray-700">
+<div
+    {{ $attributes->merge(['class' => "flex items-center space-x-2 rounded-b bg-gray-100 py-3 px-5"]) }}
+    >
     {{ $slot }}
 </div>

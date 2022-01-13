@@ -24,4 +24,18 @@ class Grid extends Component
             'languages' => $this->languages,
         ]);
     }
+
+    public function openModal($id) {
+        $this->dispatchBrowserEvent('modal', [
+            'type' => 'open',
+            'id' => $id,
+        ]);
+    }
+
+    public function closeModal($id) {
+        $this->dispatchBrowserEvent('modal', [
+            'type' => 'close',
+            'id' => $id,
+        ]);
+    }
 }

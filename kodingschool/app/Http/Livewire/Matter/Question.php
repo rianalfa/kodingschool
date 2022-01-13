@@ -42,8 +42,14 @@ class Question extends Component
         if ($this->question === $this->matter->answer) {
             $this->dispatchBrowserEvent('swal', [
                 'icon' => 'success',
-                'title' => 'Jawaban Benar',
-                'timer' => 5000
+                'iconColor' => '#0ea5e9',
+                'title' => 'Yeay!',
+                'text' => 'Jawabanmu benar.',
+                'timer' => 5000,
+                'buttonsStyling' => false,
+                'customClass' => [
+                    'confirmButton' => 'font-semibold text-sm tracking-widest bg-sky-500 hover:bg-sky-400 text-white rounded-md active:bg-sky-400 focus:border-sky-400 focus:ring-sky-300 anchor-button py-2 px-4'
+                ],
             ]);
 
             $user = User::whereId(Auth::user()->id)->first();
@@ -92,8 +98,13 @@ class Question extends Component
         } else {
             $this->dispatchBrowserEvent('swal', [
                 'icon' => 'error',
-                'title' => 'Jawaban Salah',
-                'timer' => 5000
+                'title' => 'Yaah!',
+                'text' => 'Jawabanmu belum tepat.',
+                'timer' => 5000,
+                'buttonsStyling' => false,
+                'customClass' => [
+                    'confirmButton' => 'font-semibold text-sm tracking-widest bg-red-500 hover:bg-red-400 text-white rounded-md active:bg-red-400 focus:border-red-400 focus:ring-red-300 anchor-button py-2 px-4'
+                ],
             ]);
             $this->point = ($this->point === 0) ? 0 : $this->point-25;
         }

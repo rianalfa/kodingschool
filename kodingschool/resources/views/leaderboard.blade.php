@@ -9,7 +9,7 @@
     </div>
 
     <div class="w-5/6 max-w-5xl mx-auto">
-        <x-card.base>
+        <x-card.base class="sm:py-9">
             @if (count($leaderboard))
                 @foreach ($leaderboard as $leader)
                     @if ($loop->iteration==1)
@@ -39,6 +39,9 @@
                     @endif
                 @endforeach
             @else
+                <p class="text-9xl text-red-500 text-center my-5">
+                    <i class="fas fa-user-times"></i>
+                </p>
                 <p class="text-xl font-bold text-center">Sayang sekali, belum ada peringkat untuk hari ini :(</p>
             @endif
         </x-card.base>

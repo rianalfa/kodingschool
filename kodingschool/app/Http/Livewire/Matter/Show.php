@@ -45,9 +45,14 @@ class Show extends Component
         if ($this->matter == 'finished') {
             $this->dispatchBrowserEvent('swal', [
                 'icon' => 'success',
+                'iconColor' => '#0ea5e9',
                 'title' => 'Selamat!',
                 'text' => 'Kamu telah menyelesaikan seluruh materi yang ada pada bahasa ini!',
                 'timer' => 5000,
+                'buttonsStyling' => false,
+                'customClass' => [
+                    'confirmButton' => 'font-semibold text-sm tracking-widest bg-sky-500 hover:bg-sky-400 text-white rounded-md active:bg-sky-400 focus:border-sky-400 focus:ring-sky-300 anchor-button py-2 px-4'
+                ],
             ]);
         } else {
             $this->newStudy();
