@@ -10,6 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\UserDetail;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -17,6 +18,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
+    use HasRoles;
     use TwoFactorAuthenticatable;
 
     /**
@@ -62,5 +64,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function detail() {
         return $this->hasOne(UserDetail::class);
+    }
+
+    public function planner() {
+        return $this->hasOne(Planner::class);
     }
 }

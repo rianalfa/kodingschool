@@ -30,8 +30,27 @@ class Footer extends Component
     {
         $this->reload();
         return view('matter.footer', [
+            'username' => $this->detail->username,
             'level' => $this->level,
             'nextLevel' => $this->nextLevel,
         ]);
+    }
+
+    public function openModal($id) {
+        $this->dispatchBrowserEvent('modal', [
+            'type' => 'open',
+            'id' => $id,
+        ]);
+    }
+
+    public function closeModal($id) {
+        $this->dispatchBrowserEvent('modal', [
+            'type' => 'close',
+            'id' => $id,
+        ]);
+    }
+
+    public function showHint() {
+        $this->emitTo('matter.show', 'showHint');
     }
 }

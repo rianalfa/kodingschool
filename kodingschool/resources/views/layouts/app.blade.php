@@ -45,6 +45,15 @@
                 }
             });
         </script>
+
+        @if (session()->has('message'))
+            <x-modal.base id="flashmessage" title="" style="display: block;">
+                <x-modal.body>
+                    {{ session('message') }}
+                </x-modal.body>
+            </x-modal.base>
+        @endif
+
         @livewireScripts
         @stack('scripts')
     </body>

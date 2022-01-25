@@ -4,8 +4,8 @@
             <x-jet-authentication-card-logo />
         </x-slot>
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+        <div class="mb-4 text-sm text-gray-800">
+            {{ __('Lupa password? Jangan khawatir. Masukkan alamat emailmu dibawah ini, kami akan kirimkan tautan untuk mereset passwordmu. Silahkan cek email mu setelahnya.') }}
         </div>
 
         @if (session('status'))
@@ -20,14 +20,14 @@
             @csrf
 
             <div class="block">
-                <x-jet-label for="email" value="{{ __('Email') }}" />
-                <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+                <x-input.label for="email" value="{{ __('Email') }}" />
+                <x-input.text id="email" type="email" name="email" :value="old('email')" required autofocus />
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <x-jet-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-jet-button>
+                <x-button.primary type="submit">
+                    {{ __('Kirim Tautan Reset Password') }}
+                </x-button.primary>
             </div>
         </form>
     </x-jet-authentication-card>

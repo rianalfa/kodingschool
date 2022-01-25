@@ -12,4 +12,10 @@
             @endif
         </div>
     </div>
+
+    <x-modal.lg title="Hint" id="hintModal">
+        <x-modal.body>
+            {{ $matter->hint }}
+        </x-modal.body>
+    </x-modal.lg>
 </div>

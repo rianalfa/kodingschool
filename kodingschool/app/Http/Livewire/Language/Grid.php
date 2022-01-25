@@ -3,6 +3,8 @@
 namespace App\Http\Livewire\Language;
 
 use App\Models\Language;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Grid extends Component
@@ -22,20 +24,6 @@ class Grid extends Component
         $this->reload();
         return view('language.grid', [
             'languages' => $this->languages,
-        ]);
-    }
-
-    public function openModal($id) {
-        $this->dispatchBrowserEvent('modal', [
-            'type' => 'open',
-            'id' => $id,
-        ]);
-    }
-
-    public function closeModal($id) {
-        $this->dispatchBrowserEvent('modal', [
-            'type' => 'close',
-            'id' => $id,
         ]);
     }
 }

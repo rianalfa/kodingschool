@@ -22,7 +22,7 @@
                 @auth
                     <div class="flex">
                         <div class="ml-4 flex items-center mx-3">
-
+                            @livewire('notifications.header', key($user->id))
                         </div>
                         <div class="hidden md:block">
                             <ul class="flex items-center">

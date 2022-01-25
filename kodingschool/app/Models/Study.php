@@ -15,4 +15,8 @@ class Study extends Model
         'user_answer',
         'point',
     ];
+
+    public function matter() {
+        return $this->belongsTo(Matter::class)->first();
+    }
 }

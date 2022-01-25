@@ -27,11 +27,11 @@
                 </x-jet-dropdown-link>
             @empty
                 <li class="p-2 text-sm text-gray-500">
-                    <p class="text-center italic">No unread notifications</p>
+                    <p class="text-center italic">Tidak ada notifikasi baru</p>
                 </li>
             @endforelse
-            <x-jet-dropdown-link href="#" class="font-bold text-center text-gray-600">
-                See All Your Notifications
+            <x-jet-dropdown-link href="{{ route('notifications') }}" class="font-bold text-center text-gray-600">
+                Lihat semua notifikasi
             </x-jet-dropdown-link>
         </ul>
     </x-slot>

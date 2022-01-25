@@ -1,4 +1,4 @@
-<li>
+    <li>
     <x-jet-dropdown align="right" width="48">
         <x-slot name="trigger">
             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
@@ -10,9 +10,8 @@
             @else
                 <span class="inline-flex rounded-md">
                     <button type="button"
-                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
-                        {{ Auth::user()->name }}
-                        <i class="gg-chevron-down" style="--ggs: 0.7;"></i>
+                        class="inline-flex items-center p-2 border border-transparent rounded-full text-gray-700 bg-gray-200 hover:text-gray-500 focus:outline-none transition">
+                        <i class="fas fa-user text-xl"></i>
                     </button>
                 </span>
             @endif

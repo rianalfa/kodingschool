@@ -56,6 +56,10 @@ class Matter extends Model
         return $this->belongsTo(Chapter::class);
     }
 
+    public function studies() {
+        return $this->hasMany(Study::class);
+    }
+
     public function study($userId) {
         return $this->hasMany(Study::class)->where('user_id', $userId)->first();
     }

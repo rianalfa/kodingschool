@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\Planner;
 use App\Models\User;
 use App\Models\UserDetail;
 use Illuminate\Support\Facades\Hash;
@@ -23,6 +24,7 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:25', 'unique:user_details'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['required', 'accepted'] : '',
@@ -34,10 +36,17 @@ class CreateNewUser implements CreatesNewUsers
             'password' => Hash::make($input['password']),
         ]);
 
+        $user->assignRole('user');
+
         UserDetail::create([
             'user_id' => $user->id,
             'level_id' => 1,
             'point' => 0,
+            'username' => $input['username'],
+        ]);
+
+        $planner = Planner::create([
+            'user_id' => $user->id,
         ]);
 
         return $user;

@@ -21,6 +21,6 @@ class Show extends Component
     {
         $this->reload();
         return view('notifications', ['notifications' => $this->notifications])
-            ->layoutData(['title' => "List Notifications"]);
+            ->layout('layouts.app', ['title' => "List Notifications"]);
     }
 }

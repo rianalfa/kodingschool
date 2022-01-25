@@ -4,8 +4,11 @@ namespace App\Http\Livewire\Matter;
 
 use Livewire\Component;
 use App\Models\Matter;
+use App\Models\Planner;
 use App\Models\Study;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Show extends Component
 {
@@ -15,11 +18,18 @@ class Show extends Component
         'reloadMatter' => '$refresh',
         'nextMatter' => 'next',
         'correctAnswer' => 'correctAnswer',
+        'showHint' => 'showHint',
     ];
 
     public function mount($id) {
         $this->matter = Matter::whereId($id)->first();
         $this->newStudy();
+
+        $today = strtolower(date("l"));
+        $planner = User::whereId(Auth::user()->id)->first()->planner()->first();
+        if ($planner[$today]=="1") {
+            DB::table('planners')->whereId($planner->id)->update([$today => "3"]);
+        }
     }
 
     public function newStudy() {
@@ -62,9 +72,20 @@ class Show extends Component
         }
     }
 
+    public function openModal($id) {
+        $this->dispatchBrowserEvent('modal', [
+            'type' => 'open',
+            'id' => $id,
+        ]);
+    }
+
     public function render()
     {
         return view('matter.show')
                 ->layout('layouts.matter');
+    }
+
+    public function showHint() {
+        $this->openModal('hintModal');
     }
 }
