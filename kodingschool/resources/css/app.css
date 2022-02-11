@@ -1,3 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@import "notyf/notyf.min.css";
+
+@import url("https://css.gg/css");

@@ -4,13 +4,13 @@
             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                 <button
                     class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                    <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}"
+                    <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-300" src="{{ Auth::user()->profile_photo_url }}"
                         alt="{{ Auth::user()->name }}" />
                 </button>
             @else
                 <span class="inline-flex rounded-md">
-                    <button type="button"
-                        class="inline-flex items-center p-2 border border-transparent rounded-full text-gray-700 bg-gray-200 hover:text-gray-500 focus:outline-none transition">
+                    <button type="button" class="inline-flex items-center justify-center bg-sky-100 rounded-full
+                         hover:scale-110 focus:scale-110 h-10 w-10 p-2">
                         <i class="fas fa-user text-xl"></i>
                     </button>
                 </span>
@@ -18,13 +18,12 @@
         </x-slot>
 
         <x-slot name="content">
-            <!-- Account Management -->
-            <div class="block px-4 py-2 text-xs text-gray-400">
-                {{ __('Manage Account') }}
-            </div>
+            <x-jet-dropdown-link href="{{ route('user.profile') }}">
+                {{ __('Lihat Profil') }}
+            </x-jet-dropdown-link>
 
-            <x-jet-dropdown-link href="#profile.show">
-                {{ __('Profile') }}
+            <x-jet-dropdown-link href="{{ route('profile.show') }}">
+                {{ __('Atur Profil') }}
             </x-jet-dropdown-link>
 
             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())

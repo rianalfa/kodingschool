@@ -1,5 +1,5 @@
-<div class="m-auto max-w-5xl">
-    <div class="lg:grid lg:grid-cols-3 lg:gap-6 mx-2 my-2" {{ $attributes }}>
+<div class="m-auto max-w-full">
+    <div {{ $attributes->merge(['class' => 'lg:grid lg:grid-cols-3 lg:gap-6 mx-2 my-2']) }}>
         {{-- title --}}
         <div class="lg:col-span-1 flex justify-between">
             <div class="px-4 md:px-0">

@@ -6,6 +6,7 @@ use App\Http\Livewire\Language\Show as LanguageShow;
 use App\Http\Livewire\Leaderboard;
 use App\Http\Livewire\Matter\Show;
 use App\Http\Livewire\Notifications\Show as NotificationsShow;
+use App\Http\Livewire\User\Profile;
 use App\Mail\BaseEmail;
 use Illuminate\Support\Facades\Route;
 use App\Models\Language;
@@ -71,9 +72,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         });
     });
 
-    Route::get('/dashboard', function() {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', Grid::class)->name('dashboard');
+
+    Route::get('/profile/{id?}', Profile::class)->name('user.profile');
 
     Route::name('study.')->group(function() {
         Route::get('/study', function() {

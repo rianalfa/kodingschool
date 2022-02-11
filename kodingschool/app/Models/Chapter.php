@@ -15,6 +15,7 @@ class Chapter extends Model
         'name',
         'language_id',
         'number',
+        'description',
     ];
 
     public function matters() {

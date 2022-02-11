@@ -12,29 +12,42 @@ use Livewire\Component;
 
 class Show extends Component
 {
-    public $language;
+    public $languageId;
+    public $activeChapter;
+    private $language;
+    private $chapters;
 
     protected $listeners = [
-        'reloadAll' => '$refresh',
+        'reloadLanguage' => 'reload',
     ];
 
     public function mount($id) {
-        $this->language = Language::whereId($id)->first();
+        $this->languageId = $id;
+        $chapter = Chapter::where('language_id', $id)->orderBy('number', 'asc')->first();
+        $this->activeChapter = !empty($chapter) ? $chapter->id : null;
+    }
+
+    public function reload() {
+        $this->language = Language::whereId($this->languageId)->first();
+        $this->chapters = $this->language->chapters()->get();
         if (!count($this->language->chapters()->get())) {
             session()->flash('message', 'Maaf, materi untuk bahasa ini belum tersedia');
             return redirect()->to('/dashboard');
         }
     }
 
-    public function render()
-    {
-        return view('language.show');
+    public function checkDetail($id) {
+        $this->activeChapter = $id;
+        $this->emitTo('chapter.show', 'reloadChapter', $id);
+        $this->emitTo('matter.grid', 'reloadMatters', $id);
     }
 
-    public function openModal($id) {
-        $this->dispatchBrowserEvent('modal', [
-            'type' => 'open',
-            'id' => $id,
+    public function render()
+    {
+        $this->reload();
+        return view('language.show', [
+            'language' => $this->language,
+            'chapters' => $this->chapters,
         ]);
     }
 }

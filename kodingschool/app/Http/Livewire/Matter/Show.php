@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Matter;
 
+use App\Http\Controllers\Matter as ControllersMatter;
 use Livewire\Component;
 use App\Models\Matter;
 use App\Models\Planner;
@@ -13,39 +14,53 @@ use Illuminate\Support\Facades\DB;
 class Show extends Component
 {
     public $matter;
+    public $question;
+    public $point;
+    public $nextLevel;
 
     protected $listeners = [
-        'reloadMatter' => '$refresh',
+        'reloadMatter' => 'reload',
         'nextMatter' => 'next',
         'correctAnswer' => 'correctAnswer',
         'showHint' => 'showHint',
     ];
 
     public function mount($id) {
-        $this->matter = Matter::whereId($id)->first();
-        $this->newStudy();
-
-        $today = strtolower(date("l"));
-        $planner = User::whereId(Auth::user()->id)->first()->planner()->first();
-        if ($planner[$today]=="1") {
-            DB::table('planners')->whereId($planner->id)->update([$today => "3"]);
-        }
+        $this->reload($id);
+        ControllersMatter::checkPlanner();
     }
 
-    public function newStudy() {
-        if (empty(Study::where('user_id', Auth::user()->id)->where('matter_id', $this->matter->id)->first())) {
-            Study::insert([
-                'user_id' => Auth::user()->id,
-                'matter_id' => $this->matter->id,
-                'user_answer' => "",
-                'point' => 0,
-            ]);
-        }
+    public function reload($id) {
+        $this->matter = Matter::whereId($id)->first();
+        $this->question = $this->matter->question;
+        $this->point = $this->matter->difficulty()->first()->point;
+
+        $this->matterCode();
+        $this->nextLevel = ControllersMatter::checkNextLevel();
+    }
+
+    public function matterCode() {
+        $this->matter->code = ControllersMatter::getCode($this->matter->matter);
+        $this->matter->codeInstruction = ControllersMatter::getCode($this->matter->instruction);
+        $this->matter->instruction = explode("```", $this->matter->instruction);
+        $this->matter->matter = explode ("```", $this->matter->matter);
     }
 
     public function next() {
         if (!empty($this->matter->question)) {
-            $this->emitTo('matter.question', 'checkAnswer');
+            if ($this->question === $this->matter->answer) {
+                ControllersMatter::correctAnswer($this->matter->id, $this->point, $this->question);
+
+                $this->emit('success', 'Jawabanmu benar.');
+                $this->correctAnswer();
+            } else {
+                $this->emit('error', 'Jawabanmu belum tepat.');
+                $this->point = ($this->point === 0) ? 0 : $this->point-25;
+                $this->reload($this->matter->id);
+            }
+        } else {
+            ControllersMatter::correctAnswer($this->matter->id, $this->point);
+            $this->correctAnswer();
         }
     }
 
@@ -53,39 +68,17 @@ class Show extends Component
         $this->matter = Matter::next($this->matter->number, $this->matter->chapter_id);
 
         if ($this->matter == 'finished') {
-            $this->dispatchBrowserEvent('swal', [
-                'icon' => 'success',
-                'iconColor' => '#0ea5e9',
-                'title' => 'Selamat!',
-                'text' => 'Kamu telah menyelesaikan seluruh materi yang ada pada bahasa ini!',
-                'timer' => 5000,
-                'buttonsStyling' => false,
-                'customClass' => [
-                    'confirmButton' => 'font-semibold text-sm tracking-widest bg-sky-500 hover:bg-sky-400 text-white rounded-md active:bg-sky-400 focus:border-sky-400 focus:ring-sky-300 anchor-button py-2 px-4'
-                ],
-            ]);
+            $this->emit('swal', 'success', 'Kamu telah menyelesaikan seluruh materi yang ada pada bahasa ini!');
         } else {
-            $this->newStudy();
-            $this->emitTo('matter.detail', 'reloadMatterDetail', $this->matter->id);
-            $this->emitTo('matter.question', 'reloadMatterQuestion', $this->matter->id);
-            $this->emit('reloadMatter');
+            ControllersMatter::checkNewStudy($this->matter->id);
+            $this->emitTo('matter.question', 'reloadQuestion', $this->matter->id);
+            $this->reload($this->matter->id);
         }
-    }
-
-    public function openModal($id) {
-        $this->dispatchBrowserEvent('modal', [
-            'type' => 'open',
-            'id' => $id,
-        ]);
     }
 
     public function render()
     {
         return view('matter.show')
                 ->layout('layouts.matter');
-    }
-
-    public function showHint() {
-        $this->openModal('hintModal');
     }
 }

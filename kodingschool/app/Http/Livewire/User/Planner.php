@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Planner as ModelsPlanner;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +49,7 @@ class Planner extends Component
     public function render()
     {
         $this->reload();
-        return view('planner', [
+        return view('user.planner', [
             'days' => $this->days,
         ]);
     }
@@ -63,10 +64,10 @@ class Planner extends Component
         } else {
             $this->planner[$day] = "0";
         }
-        DB::table('planners')->whereId($this->planner->id)->update([$day => $this->planner[$day]]);
+        ModelsPlanner::whereId($this->planner->id)->update([$day => $this->planner[$day]]);
     }
 
     public function editNote() {
-        DB::table('planners')->whereId($this->planner->id)->update(['note' => $this->note]);
+        ModelsPlanner::whereId($this->planner->id)->update(['note' => $this->note]);
     }
 }

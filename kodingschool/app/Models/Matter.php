@@ -61,6 +61,6 @@ class Matter extends Model
     }
 
     public function study($userId) {
-        return $this->hasMany(Study::class)->where('user_id', $userId)->first();
+        return $this->hasOne(Study::class)->where('user_id', $userId)->first();
     }
 }

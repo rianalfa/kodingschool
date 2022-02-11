@@ -6,5 +6,6 @@ import swal from 'sweetalert2';
 window.Swal = swal;
 
 window.Alpine = Alpine;
+window.$ = require( "jquery" );
 
 Alpine.start();
