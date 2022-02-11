@@ -10,10 +10,10 @@ class UpdateDetailInformationForm extends Component
     public $detail;
 
     protected $rules = [
-        'detail.year' => 'nullable|between:1,4|size:1',
-        'detail.class' => 'nullable|string|size:4',
+        'detail.year' => 'nullable|numeric|between:1,4|digits:1',
+        'detail.class' => 'nullable|string|alpha_num|size:4',
         'detail.address' => 'nullable|string',
-        'detail.phone' => 'nullable|numeric|starts_with:628|min:12|max:14',
+        'detail.phone' => 'nullable|numeric|starts_with:628|digits_between:11,14',
         'detail.motto' => 'nullable|string',
         'detail.level_id' => 'required|exists:levels,id|min:1',
         'detail.point' => 'required|min:0',

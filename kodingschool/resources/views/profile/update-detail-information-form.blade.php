@@ -16,7 +16,7 @@
 
         <div class="col-span-6 sm:col-span-4">
             <x-input.label for="class" value="Kelas" />
-            <x-input.textarea id="class" wire:model.defer="detail.class" type="text" rows="2" />
+            <x-input.text id="class" wire:model.defer="detail.class" type="text" />
             <x-input.error for="detail.class" />
         </div>
 
@@ -28,7 +28,7 @@
 
         <div class="col-span-6 sm:col-span-4">
             <x-input.label for="phone" value="Telepon" />
-            <x-input.text id="phone" wire:model.defer="detail.phone" type="text" />
+            <x-input.text id="phone" wire:model.defer="detail.phone" type="text" placeholder="628..." />
             <x-input.error for="detail.phone" />
         </div>
 

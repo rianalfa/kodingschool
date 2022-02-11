@@ -67,9 +67,9 @@
         </div>
 
         <div class="col-span-6 sm:col-span-4">
-            <x-jet-label for="username" value="Username" />
-            <x-jet-input id="username" type="username" class="mt-1 block w-full" wire:model.defer="state.username" />
-            <x-jet-input-error for="username" class="mt-2" />
+            <x-input.label for="username" value="Username" />
+            <x-input.text id="username" type="text" wire:model.defer="state.username" />
+            <x-input.error for="username" />
         </div>
     </x-slot>
 

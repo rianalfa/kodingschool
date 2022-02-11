@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Language;
 use App\Models\Language;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
 
@@ -13,17 +14,10 @@ class ModalLanguage extends ModalComponent
     public $language;
 
     protected function rules() {
-        if ($this->language->id==null) {
-            return [
-                'language.name' => 'required|unique:languages,name',
-                'language.description' => 'nullable|string',
-            ];
-        } else {
-            return [
-                'language.name' => 'required',
-                'language.description' => 'nullable|string',
-            ];
-        }
+        return [
+            'language.name' => ['required', Rule::unique('languages')->ignore($this->language->id)],
+            'language.description' => 'nullable|string',
+        ];
     }
 
     public function mount($id=null) {

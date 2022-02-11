@@ -14,7 +14,7 @@
                 <x-input.text id="name" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             </div>
 
-            <div>
+            <div class="mt-4">
                 <x-input.label for="username" value="{{ __('Username') }}" />
                 <x-input.text id="username" type="text" name="username" :value="old('username')" required autocomplete="username" />
             </div>

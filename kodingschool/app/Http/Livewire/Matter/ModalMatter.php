@@ -17,14 +17,14 @@ class ModalMatter extends ModalComponent
     protected function rules() {
         if ($this->matter->instruction=="") {
             return [
-                'matter.name' => 'required|max:25',
+                'matter.name' => 'required|max:25|unique:matters,name,NULL,id,chapter_id,'.$this->chapterId,
                 'matter.matter' => 'required',
                 'matter.difficulty_id' => 'required|exists:difficulties,id',
                 'matter.number' => 'required',
             ];
         } else {
             return [
-                'matter.name' => 'required|max:25',
+                'matter.name' => 'required|max:25|unique:matters,name,NULL,id,chapter_id,'.$this->chapterId,
                 'matter.matter' => 'required',
                 'matter.instruction' => 'required',
                 'matter.answer' => 'required',

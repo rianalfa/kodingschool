@@ -8,7 +8,7 @@
     </x-slot>
 
     <x-slot name="content">
-        <div class="mt-5">
+        <div class="flex justify-end mt-5">
             <x-button.error wire:click="confirmUserDeletion" wire:loading.attr="disabled">
                 Hapus Akun
             </x-button.error>

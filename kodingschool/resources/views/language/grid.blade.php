@@ -30,6 +30,6 @@
     </div>
 
     @role('user')
-        @livewire('planner')
+        @livewire('user.planner')
     @endrole
 </div>
