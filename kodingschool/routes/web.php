@@ -7,6 +7,7 @@ use App\Http\Livewire\Leaderboard;
 use App\Http\Livewire\Matter\Show;
 use App\Http\Livewire\Notifications\Show as NotificationsShow;
 use App\Http\Livewire\User\Profile;
+use App\Http\Livewire\User\UserTable;
 use App\Mail\BaseEmail;
 use Illuminate\Support\Facades\Route;
 use App\Models\Language;
@@ -19,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Spatie\Permission\Contracts\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +72,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             $user = User::whereId(Auth::user()->id)->first();
             Notification::send($user, new BaseNotification($notificationData));
         });
+
+        Route::get('/users', function() {
+            return view('user/users');
+        })->name('users');
     });
 
     Route::get('/dashboard', Grid::class)->name('dashboard');

@@ -1,5 +1,5 @@
 <x-anchor.white href="{{ route('study.language', $language->id) }}"
-    class="transition ease-out delay-100 hover:bg-white hover:-translate-y-1 hover:scale-105 duration-200" >
+    class="transition-all ease-in-out delay-100 duration-1000 hover:bg-white hover:-translate-y-1 hover:scale-105" >
     <div class="flex justify-{{ auth()->user()->hasRole('user') ? 'center' : 'between' }} mb-4">
         <p class="text-lg lg:text-xl font-bold self-center">{{ $language->name }}</p>
 

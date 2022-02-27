@@ -6,7 +6,7 @@
             <p class="text-sm text-gray-400 mb-0">{{ $matter->chapter()->first()->name }}</p>
             <p class="text-sky-700 font-bold text-2xl mb-3">{{ $matter->name }}</p>
 
-            @foreach ($matter->matter as $m)
+            @forelse ($matter->matter as $m)
                 @if (in_array($m, $matter->code))
                     <x-card.base class="font-mono border-t-4 border-sky-500">{{ $m }}</x-card.base>
                 @else
@@ -14,7 +14,9 @@
                         {{ $m }}
                     </p>
                 @endif
-            @endforeach
+            @empty
+                -
+            @endforelse
 
             @if (!empty($matter->instruction))
                 <div class="w-full mt-5">
@@ -47,10 +49,7 @@
             </div>
         @endif
 
-        <div class="h-full overflow-y-auto p-6
-            scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500">
-            *Le Hasil Codingan User
-        </div>
+        @livewire('matter.shell', ['text' => ''])
     </div>
 
     <div class="bg-sky-700 absolute bottom-0 left-0 w-full h-12 px-6">
@@ -85,6 +84,7 @@
                 <x-button.white class="py-1 ml-2" wire:click="next">
                     Next
                 </x-button.white>
+                <x-button.black class="py-1 ml-2" wire:click="checkAnswer">Cek</x-button.black>
             </div>
         </div>
     </div>

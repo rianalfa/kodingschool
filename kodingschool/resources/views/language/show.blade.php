@@ -5,7 +5,7 @@
     </div>
 
     <div class="col-span-2">
-        @foreach ($chapters as $chapter)
+        @forelse ($chapters as $chapter)
             @php
                 $matters = $chapter->matters();
                 $count = 0;
@@ -23,10 +23,10 @@
                             <img src="{{ asset('images/nodejs.png') }}" class="w-1/2 object-contain">
                             <p class="text-sky-500 font-bold mt-4">Progress</p>
                             <div class="bg-gray-200 rounded-full w-1/2">
-                                @if ($progress!=0)
+                                @if (!empty($progress))
                                     <div class="bg-sky-500 text-sm text-white text-center align-middle p-0.5 leading-none rounded-full" style="width: {{ $progress }}%"> {{ $progress }}%</div>
                                 @else
-                                    <div class="text-sm text-white align-middle leading-none rounded-full w-full px-2 py-0.5"> {{ $progress }}%</div>
+                                    <div class="text-sm text-white align-middle leading-none rounded-full w-full px-2 py-0.5"> 0%</div>
                                 @endif
                             </div>
                         </div>
@@ -84,10 +84,23 @@
                     </div>
                 </div>
             </x-card.base>
-        @endforeach
+        @empty
+            <x-card.base>
+                <p class="text-xl font-bold text-center w-full mx-auto">Maaf, belum ada bab yang tersedia pada bahasa ini!</p>
+            </x-card.base>
+        @endforelse
     </div>
 
     @if ($activeChapter!=null)
         @livewire('chapter.show', ['chapterId' => $activeChapter])
     @endif
+
+    <div class="fixed bottom-10 right-10">
+        <x-button.primary class="text-2xl md:text-4xl lg:text-6xl rounded-full"
+            wire:click="$emit('openModal', 'chapter.modal-chapter', {{ json_encode([
+                        'language' => $language->id
+                    ]) }})">
+            <i class="fas fa-plus"></i>
+        </x-button.primary>
+    </div>
 </div>

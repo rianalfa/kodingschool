@@ -2,9 +2,11 @@
 
 namespace App\Http\Livewire\Matter;
 
+use App\Http\Controllers\Admin;
 use App\Models\Chapter;
 use App\Models\Difficulty;
 use App\Models\Matter;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
 
@@ -15,24 +17,16 @@ class ModalMatter extends ModalComponent
     public $difficulties;
 
     protected function rules() {
-        if ($this->matter->instruction=="") {
-            return [
-                'matter.name' => 'required|max:25|unique:matters,name,NULL,id,chapter_id,'.$this->chapterId,
-                'matter.matter' => 'required',
-                'matter.difficulty_id' => 'required|exists:difficulties,id',
-                'matter.number' => 'required',
-            ];
-        } else {
-            return [
-                'matter.name' => 'required|max:25|unique:matters,name,NULL,id,chapter_id,'.$this->chapterId,
-                'matter.matter' => 'required',
-                'matter.instruction' => 'required',
-                'matter.answer' => 'required',
-                'matter.question' => 'required',
-                'matter.difficulty_id' => 'required|exists:difficulties,id',
-                'matter.number' => 'required',
-            ];
-        }
+        return [
+            'matter.name' => 'required|max:25|unique:matters,name,NULL,id,chapter_id,'.$this->chapterId,
+            'matter.number' => 'required|unique:matters,number,NULL,id,chapter_id,'.$this->chapterId,
+            'matter.matter' => 'required|string',
+            'matter.difficulty_id' => 'required|exists:difficulties,id',
+            'matter.instruction' => 'string',
+            'matter.answer' => 'string',
+            'matter.question' => 'string',
+            'matter.hint' => 'string',
+        ];
     }
 
     public function mount($chapter, $id=null) {
@@ -51,7 +45,11 @@ class ModalMatter extends ModalComponent
         if (auth()->user()->hasRole('admin')) {
             $this->validate();
             $this->matter->chapter_id = $this->chapterId;
+
             $saved = $this->matter->save();
+
+            if(!empty($this->matter->instruction))
+                Admin::correctAnswer($this->matter->chapter->language->type, $this->matter->id, $this->matter->answer);
 
             if ($saved) {
                 $this->emit('success', 'Materi berhasil disimpan.');

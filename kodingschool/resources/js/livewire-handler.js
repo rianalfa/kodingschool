@@ -32,3 +32,8 @@
     Livewire.on('closemodal', (id) => {
         document.getElementById(id).style.display='none';
     });
+
+//Console log
+    Livewire.on('consolelog', (text) => {
+        console.log(text);
+    });

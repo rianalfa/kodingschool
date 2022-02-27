@@ -70,4 +70,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public function planner() {
         return $this->hasOne(Planner::class);
     }
+
+    public function badges() {
+        return $this->hasMany(Badge::class);
+    }
 }

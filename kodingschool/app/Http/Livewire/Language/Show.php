@@ -30,8 +30,8 @@ class Show extends Component
     public function reload() {
         $this->language = Language::whereId($this->languageId)->first();
         $this->chapters = $this->language->chapters()->get();
-        if (!count($this->language->chapters()->get())) {
-            session()->flash('message', 'Maaf, materi untuk bahasa ini belum tersedia');
+        if (!count($this->language->chapters()->get()) && auth()->user()->hasRole('user')) {
+            session()->flash('message', 'Maaf, materi untuk bahasa ini belum tersedia!');
             return redirect()->to('/dashboard');
         }
     }

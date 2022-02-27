@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Models\Badge;
 use App\Models\Language;
 use App\Models\Study;
 use App\Models\User;
@@ -12,6 +13,7 @@ use Livewire\Component;
 class Profile extends Component
 {
     private $user;
+    private $badges;
     private $languages;
 
     public function mount($id=null) {
@@ -45,6 +47,7 @@ class Profile extends Component
         }
 
         $this->languages = $languages;
+        $this->badges = Badge::where('user_id', $this->user->id)->get();
     }
 
     public function render()
@@ -52,6 +55,7 @@ class Profile extends Component
         return view('user.profile', [
             'user' => $this->user,
             'languages' => $this->languages,
+            'badges' => $this->badges,
         ]);
     }
 }

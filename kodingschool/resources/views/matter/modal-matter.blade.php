@@ -24,31 +24,32 @@
         </div>
         <div class="mt-4">
             <x-input.label value="Penjelasan Materi" />
-            <x-input.textarea wire:model="matter.matter"></x-input.textarea>
+            <x-input.textarea wire:model.defer="matter.matter"></x-input.textarea>
             <x-input.error for="matter.matter" />
         </div>
         <div class="mt-4">
             <x-input.label value="Instruksi Materi" />
-            <x-input.textarea wire:model="matter.instruction"></x-input.textarea>
+            <x-input.textarea wire:model.defer="matter.instruction"></x-input.textarea>
             <x-input.error for="matter.instruction" />
         </div>
         <div class="mt-4">
             <x-input.label value="Jawaban Benar" />
-            <x-input.textarea wire:model="matter.answer"></x-input.textarea>
+            <x-input.textarea wire:model.defer="matter.answer"></x-input.textarea>
             <x-input.error for="matter.answer" />
         </div>
         <div class="mt-4">
             <x-input.label value="Potongan Jawaban" />
-            <x-input.textarea wire:model="matter.question"></x-input.textarea>
+            <x-input.textarea wire:model.defer="matter.question"></x-input.textarea>
             <x-input.error for="matter.question" />
         </div>
         <div class="mt-4">
             <x-input.label value="Hint Jawaban" />
-            <x-input.textarea wire:model="matter.hint"></x-input.textarea>
+            <x-input.textarea wire:model.defer="matter.hint"></x-input.textarea>
             <x-input.error for="matter.hint" />
         </div>
     </x-modal.body>
     <x-modal.footer class="justify-end">
         <x-button.primary wire:click="addNewMatter">Simpan</x-button.primary>
+        <x-button.black class="ml-2" wire:click="checkAnswer()">cek</x-button.black>
     </x-modal.footer>
 </div>

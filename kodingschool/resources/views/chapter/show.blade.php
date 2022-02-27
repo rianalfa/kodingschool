@@ -13,22 +13,9 @@
                     ]) }})">
                     Tambah Materi
                 </x-button.primary>
-
-                <div class="fixed bottom-10 right-10">
-                    <x-button.primary class="text-2xl md:text-4xl lg:text-6xl rounded-full"
-                        wire:click="$emit('openModal', 'chapter.modal-chapter', {{ json_encode([
-                                    'language' => $chapter->language()->first()->id
-                                ]) }})">
-                        <i class="fas fa-plus"></i>
-                    </x-button.primary>
-                </div>
             @endrole
 
-            @if ($chapter->matters()->count()!=0)
-                @livewire('matter.grid', ['chapterId' => $chapter->id])
-            @else
-                <p class="text-center">Maaf, materi untuk bab ini belum tersedia!</p>
-            @endif
+            @livewire('matter.grid', ['chapterId' => $chapter->id])
         </div>
     </x-card.base>
 </div>

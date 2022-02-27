@@ -3924,6 +3924,10 @@ Livewire.on('openmodal', function (id) {
 });
 Livewire.on('closemodal', function (id) {
   document.getElementById(id).style.display = 'none';
+}); //Console log
+
+Livewire.on('consolelog', function (text) {
+  console.log(text);
 });
 })();
 

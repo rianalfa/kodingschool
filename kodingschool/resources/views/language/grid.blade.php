@@ -5,9 +5,13 @@
             <x-separator />
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                @foreach ($languages as $language)
+                @forelse ($languages as $language)
                     <x-study.language :language="$language" />
-                @endforeach
+                @empty
+                    <x-card.base>
+                        <p class="text-xl font-bold text-center w-full mx-auto">Maaf, belum ada bahasa yang tersedia!</p>
+                    </x-card.base>
+                @endforelse
             </div>
 
             @role('admin')

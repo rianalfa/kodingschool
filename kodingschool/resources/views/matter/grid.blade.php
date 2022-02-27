@@ -1,5 +1,5 @@
 <div>
-    @foreach ($matters as $matter)
+    @forelse ($matters as $matter)
         @if (!empty($matter->study(auth()->user()->id)))
             <div class="flex">
                 <x-anchor.white class="text-left inline-block mb-2 mr-2 border-b-4 border-b-sky-500 {{ auth()->user()->hasRole('user') ? 'w-full' : 'w-10/12' }}
@@ -79,7 +79,9 @@
                 @endrole
             </div>
         @endif
-    @endforeach
+    @empty
+        <p class="text-center">Maaf, materi untuk bab ini belum tersedia!</p>
+    @endforelse
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
