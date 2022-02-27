@@ -16,7 +16,6 @@ class Show extends Component
 {
     public $matter;
     public $question;
-    public $point;
     public $nextLevel;
 
     protected $listeners = [
@@ -27,15 +26,17 @@ class Show extends Component
     ];
 
     public function mount($id) {
-        $this->reload($id);
         ControllersMatter::checkPlanner();
         ControllersMatter::checkNewStudy($id);
+
+        $study = Study::where('user_id', auth()->user()->id)->where('matter_id', $id)->first();
+        $this->question = !empty($study->user_answer) ? $study->user_answer : $this->matter->question;
+
+        $this->reload($id);
     }
 
     public function reload($id) {
         $this->matter = Matter::whereId($id)->first();
-        $this->point = $this->matter->difficulty()->first()->point;
-        $this->question = Study::where('user_id', auth()->user()->id)->where('matter_id', $id)->first()->user_answer ?? $this->matter->question;
 
         $this->matterCode();
         $this->nextLevel = ControllersMatter::checkNextLevel();
@@ -50,19 +51,28 @@ class Show extends Component
 
     public function next() {
         if (!empty($this->matter->question)) {
-            $isItCorrect = ControllersMatter::checkAnswer($this->matter, $this->question);
+            $output = ControllersMatter::checkAnswer($this->matter, $this->question);
 
-            if ($isItCorrect==="1") {
-                ControllersMatter::correctAnswer($this->matter->id, $this->point, $this->question);
+            $study = Study::where('matter_id', $this->matter->id)->where('user_id', auth()->user()->id)->first();
+            $study->update(['user_answer' => $this->question]);
 
+            if ($output['status']==="1") {
+                $this->emitTo('matter.shell', 'reloadShell', $output['output'][0]);
+
+                ControllersMatter::correctAnswer($this->matter->id, $this->question);
                 $this->emit('success', 'Jawabanmu benar.');
                 $this->correctAnswer();
-            } elseif ($isItCorrect==="0") {
+            } elseif ($output['status']==="0") {
+                $this->emit("consolelog", 'reloadShell', $output['output'][0]);
+                $study->update(['point' => ($study->point - 25) ]);
+
                 $this->emit('error', 'Jawabanmu belum tepat.');
-                $this->point = ($this->point === 0) ? 0 : $this->point-25;
                 $this->reload($this->matter->id);
             } else {
-                $this->emit('swal', 'error', $isItCorrect);
+                $study = Study::where('matter_id', $this->matter->id)->where('user_id', auth()->user()->id)->first();
+                $study->update(['point' => ($study->point - 25) ]);
+
+                $this->emit('swal', 'error', $output['output']);
                 $this->emit('error', 'Jawabanmu belum tepat.');
                 $this->reload($this->matter->id);
             }
@@ -74,6 +84,8 @@ class Show extends Component
 
     public function correctAnswer() {
         $this->matter = Matter::next($this->matter->number, $this->matter->chapter_id);
+        $study = Study::where('user_id', auth()->user()->id)->where('matter_id', $this->matter->id)->first();
+        $this->question = !empty($study->user_answer) ? $study->user_answer : $this->matter->question;
 
         if ($this->matter == 'finished') {
             $this->emit('swal', 'success', 'Kamu telah menyelesaikan seluruh materi yang ada pada bahasa ini!');
@@ -82,36 +94,6 @@ class Show extends Component
             $this->emitTo('matter.question', 'reloadQuestion', $this->matter->id);
             $this->reload($this->matter->id);
         }
-    }
-
-    public function checkAnswer() {
-        $lines = file('../storage/app/answers/corrects/2/39/40.cpp');
-        $result = '';
-
-        if (str_contains(json_encode($lines), 'cin')) {
-            foreach ($lines as $line) {
-                if (str_contains($line, 'int main')) {
-                    $result .= 'int main(int argc, char* argv[]) {'.PHP_EOL;
-                } elseif (str_contains($line, 'cin')) {
-                    $variables = explode('>>', $line);
-                    $variables[1] = str_replace(';', '', $variables[1]);
-                    $result .= str_replace(' ', '', $variables[1]).' = argv[0];'.PHP_EOL;
-                    $result .= 'return 0;'.PHP_EOL;
-                } else {
-                    $result .= $line;
-                }
-            }
-            Storage::disk('local')->put('/answers/corrects/2/39/40.cpp', $result);
-
-            exec("g++ ../storage/app/answers/corrects/2/39/40.cpp -O3 -o ../storage/app/answers/corrects/2/39/40.exe  2>&1", $outputCompiler);
-            exec("cd .. && cd storage/app/answers/corrects/2/39 && 40.exe", $output);
-            $this->emitTo('matter.shell', 'reloadShell', json_encode($output));
-        } else {
-            exec("g++ ../storage/app/answers/corrects/2/39/40.cpp -O3 -o ../storage/app/answers/corrects/2/39/40.exe  2>&1", $outputCompiler);
-            exec("cd .. && cd storage/app/answers/corrects/2/39 && 40.exe 1", $output);
-            $this->emit('consolelog', $output);
-        }
-        $this->reload($this->matter->id);
     }
 
     public function render()

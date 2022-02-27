@@ -84,7 +84,6 @@
                 <x-button.white class="py-1 ml-2" wire:click="next">
                     Next
                 </x-button.white>
-                <x-button.black class="py-1 ml-2" wire:click="checkAnswer">Cek</x-button.black>
             </div>
         </div>
     </div>

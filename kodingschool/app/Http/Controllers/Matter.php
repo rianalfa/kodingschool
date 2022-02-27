@@ -56,46 +56,53 @@ class Matter extends Controller
 
             if (is_array($outputCompiler)) {
                 foreach ($outputCompiler as $compiler) {
-                    $output += $compiler;
+                    $output .= $compiler;
                 }
-
-                return $output;
             } else {
-                $output = var_dump($outputCompiler);
+                $output = $outputCompiler;
             }
-            return $output;
+            return [
+                'status' => '2',
+                'output' => $output,
+            ];
         }
 
         exec("cd .. && cd storage/app".$path." && ".auth()->user()->username.".exe", $userOutput);
         exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && ".$matter->id.".exe", $correctOutput);
 
         if ($userOutput===$correctOutput) {
-            return "1";
+            return [
+                'status' => '1',
+                'output' => $userOutput,
+            ];
         } else {
-            return "0";
+            return [
+                'status' => '0',
+                'output' => $userOutput,
+            ];
         }
     }
 
-    public static function correctAnswer($matterId, $newPoint, $userAnswer="") {
+    public static function correctAnswer($matterId, $userAnswer="") {
         $user = auth()->user();
 
         $point = $user->detail()->first()->point;
-        $point = $point+$newPoint;
 
         $matter = ModelsMatter::whereId($matterId)->first();
         $study = Study::where('user_id', $user->id)->where('matter_id', $matterId);
+        $point = $point + $study->first()->point;
 
-        if ($study->first()->point==0) {
+        if ($study->first()->finished=='0') {
             $result = Result::where('user_id', $user->id)->where('date', date('Y-m-d'))->first();
 
             if (!empty($result)) {
                 Result::where('user_id', $user->id)
                         ->where('date', date('Y-m-d'))
-                        ->update(['point' => $result->point + $newPoint]);
+                        ->update(['point' => $result->point + $study->first()->point]);
             } else {
                 Result::insert([
                     'user_id' => $user->id,
-                    'point' => $newPoint,
+                    'point' => $study->first()->point,
                     'date' => date('Y-m-d'),
                 ]);
             }
@@ -116,7 +123,8 @@ class Matter extends Controller
 
         $study->update([
                 'user_answer' => $userAnswer,
-                'point' => $newPoint,
+                'updated_at' => date('Y-m-d G:i:s'),
+                'finished' => '1',
             ]);
 
         Matter::checkAnswer($matter, $userAnswer);
@@ -130,12 +138,13 @@ class Matter extends Controller
     }
 
     public static function checkNewStudy($id) {
+        $matter = ModelsMatter::whereId($id)->first();
         if (empty(Study::where('user_id', auth()->user()->id)->where('matter_id', $id)->first())) {
             Study::insert([
                 'user_id' => auth()->user()->id,
                 'matter_id' => $id,
                 'user_answer' => "",
-                'point' => 0,
+                'point' => $matter->difficulty->point,
             ]);
         }
     }
