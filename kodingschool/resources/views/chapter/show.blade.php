@@ -6,14 +6,14 @@
             {{ $chapter->description}}
         </p>
         <div class="flex flex-col mt-8">
-            @role('admin')
+            @if (auth()->user()->hasRole('admin'))
                 <x-button.primary class="ml-auto mb-4"
                     wire:click="$emit('openModal', 'matter.modal-matter', {{ json_encode([
                         'chapter' => $chapter->id
                     ]) }})">
                     Tambah Materi
                 </x-button.primary>
-            @endrole
+            @endif
 
             @livewire('matter.grid', ['chapterId' => $chapter->id])
         </div>

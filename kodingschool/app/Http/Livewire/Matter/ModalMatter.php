@@ -16,40 +16,37 @@ class ModalMatter extends ModalComponent
     public $chapterId;
     public $difficulties;
 
+    protected $listeners = [
+        'saveMatter' => 'saveMatter',
+    ];
+
     protected function rules() {
         return [
-            'matter.name' => 'required|max:25|unique:matters,name,NULL,id,chapter_id,'.$this->chapterId,
-            'matter.number' => 'required|unique:matters,number,NULL,id,chapter_id,'.$this->chapterId,
+            'matter.name' => 'required|max:25|unique:matters,name,'.$this->matter->id.',id,chapter_id,'.$this->chapterId,
+            'matter.number' => 'required|unique:matters,number,'.$this->matter->id.',id,chapter_id,'.$this->chapterId,
             'matter.matter' => 'required|string',
             'matter.difficulty_id' => 'required|exists:difficulties,id',
-            'matter.instruction' => 'string',
-            'matter.answer' => 'string',
-            'matter.question' => 'string',
-            'matter.hint' => 'string',
         ];
     }
 
     public function mount($chapter, $id=null) {
         $this->chapterId = $chapter;
+        $this->matter = Matter::whereId($id)->first() ?? new Matter();
+        if ($this->matter->matter==null) $this->matter->matter="";
 
-        if ($id!=null) {
-            $this->matter = Matter::whereId($id)->first();
-        } else {
-            $this->matter = new Matter();
-        }
         $this->difficulties = Difficulty::get();
         $this->matter->difficulty_id = $this->difficulties[0]->id;
     }
 
-    public function addNewMatter() {
+    public function saveMatter($matter) {
         if (auth()->user()->hasRole('admin')) {
-            $this->validate();
+            $this->matter->matter = $matter;
             $this->matter->chapter_id = $this->chapterId;
+            $this->emit('matterEditor', $matter);
+
+            $this->validate();
 
             $saved = $this->matter->save();
-
-            if(!empty($this->matter->instruction))
-                Admin::correctAnswer($this->matter->chapter->language->type, $this->matter->id, $this->matter->answer);
 
             if ($saved) {
                 $this->emit('success', 'Materi berhasil disimpan.');
@@ -64,6 +61,11 @@ class ModalMatter extends ModalComponent
             $this->emit('error', 'Anda bukan admin');
         }
         $this->closeModal();
+    }
+
+    public static function modalMaxWidth(): string
+    {
+        return '4xl';
     }
 
     public function render()

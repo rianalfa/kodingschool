@@ -5,3 +5,6 @@
 @import "notyf/notyf.min.css";
 
 @import url("https://css.gg/css");
+
+@import 'codemirror/lib/codemirror.css';
+@import 'codemirror/theme/dracula.css';

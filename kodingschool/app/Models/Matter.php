@@ -25,27 +25,32 @@ class Matter extends Model
     ];
 
     public static function next($number, $chapter) {
+        $matter = [];
         if ($number == Matter::where('chapter_id', $chapter)->orderBy('number', 'desc')->first()->number) {
             $chapter = Chapter::whereId($chapter)->first();
 
             if ($chapter->number == Chapter::where('language_id', $chapter->language_id)->orderBy('number', 'desc')->first()->number) {
-                return "finished";
+                $matter[0] = "finished";
+                $matter[1] = Matter::where('chapter_id', $chapter)->where('number', $number)->first();
             } else {
                 $chapter = Chapter::where('language_id', $chapter->language()->first()->id)
                                 ->where('number', '>', $chapter->number)
                                 ->orderBy('number', 'asc')
                                 ->first();
 
-                return Matter::where('chapter_id', $chapter->id)
+                $matter[0] = "noFinished";
+                $matter[1] = Matter::where('chapter_id', $chapter->id)
                             ->orderBy('number', 'asc')
                             ->first();
             }
         } else {
-            return Matter::where('number', '>', $number)
+            $matter[0] = "notFinished";
+            $matter[1] = Matter::where('number', '>', $number)
                         ->where('chapter_id', $chapter)
                         ->orderBy('number', 'asc')
                         ->first();
         }
+        return $matter;
     }
 
     public function difficulty() {

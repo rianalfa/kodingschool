@@ -14,7 +14,7 @@ class ModalChapter extends ModalComponent
 
     protected function rules() {
         return [
-            'chapter.name' => 'required|max:25|unique:chapters,name,NULL,id,language_id,'.$this->languageId,
+            'chapter.name' => 'required|max:25|unique:chapters,name,'.$this->chapter->id.',id,language_id,'.$this->languageId,
             'chapter.number' => 'required|numeric',
             'chapter.description' => 'nullable|string',
         ];

@@ -1,5 +1,6 @@
 // Notyf
-    const notification = require("notyf");
+    const { default: Editor } = require("@toast-ui/editor");
+const notification = require("notyf");
     const notyf = new notification.Notyf({ duration: 3000 });
 
     Livewire.on("error", (message) => {
@@ -36,4 +37,47 @@
 //Console log
     Livewire.on('consolelog', (text) => {
         console.log(text);
+    });
+
+//Viewer
+    Livewire.on('viewer', (id, text) => {
+        const viewer = new Viewer({
+            el: document.getElementById(id),
+            initialValue: text,
+            plugins: [codeSyntaxHighlight],
+        });
+    });
+
+//CodeMirror
+    let codeEditor;
+    Livewire.on('codeEditor', (id, mode) => {
+        codeEditor = CodeMirror.fromTextArea(document.getElementById(id), {
+            theme: 'dracula',
+            matchBrackets: true,
+            mode: mode,
+            indentUnit: 4,
+            smartIndent: true,
+            indentWithTabs: true,
+            cursorHeight: 0.85,
+        });
+        codeEditor.setSize("100%", "100%");
+    });
+
+    Livewire.on('saveCodeEditor', () => {
+        Livewire.emit('nextMatter', codeEditor.getValue());
+    });
+
+//JavaScript Answer Checker
+    Livewire.on('javaScriptChecker', (text) => {
+        let doc = document.createElement('html');
+        doc.innerHTML=text;
+
+        var hashValue=0;
+        var i, code;
+        for (i=0; i<doc.innerText.length; i++) {
+            code = doc.innerText.charCodeAt(i);
+            hashValue = hashValue * 32 - hashValue + code;
+            hashValue |= 0;
+        }
+        Livewire.emit('javaScriptAnswer', text, hashValue);
     });

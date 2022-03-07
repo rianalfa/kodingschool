@@ -14,7 +14,7 @@
                         </div>
                     </div>
                 </x-anchor.white>
-                @role('admin')
+                @if(auth()->user()->hasRole('admin'))
                     <x-jet-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <x-button.white class="float-right btn-dropdown"><i class="fas fa-ellipsis-v text-sm"></i></x-button.white>
@@ -28,6 +28,10 @@
                                     ]) }})">
                                 Edit
                             </x-button.white>
+                            <x-button.white class="text-left border-0 w-full btn-dropdown"
+                                wire:click="$emit('openModal', 'matter.modal-matter-instruction', {{ json_encode(['id' => $matter->id]) }})">
+                                Instruksi
+                            </x-button.white>
                             <x-button.white class="text-red-500 text-left border-0 w-full btn-dropdown"
                                 wire:click="$emit('openModal', 'matter.modal-delete', {{ json_encode([
                                     'chapter' => $chapterId,
@@ -37,7 +41,7 @@
                             </x-button.white>
                         </x-slot>
                     </x-jet-dropdown>
-                @endrole
+                @endif
             </div>
         @else
             <div class="flex">
@@ -53,7 +57,7 @@
                         </div>
                     </div>
                 </x-anchor.black>
-                @role('admin')
+                @if(auth()->user()->hasRole('admin'))
                     <x-jet-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <x-button.white class="float-right btn-dropdown"><i class="fas fa-ellipsis-v text-sm"></i></x-button.white>
@@ -67,6 +71,10 @@
                                     ]) }})">
                                 Edit
                             </x-button.white>
+                            <x-button.white class="text-left border-0 w-full btn-dropdown"
+                                wire:click="$emit('openModal', 'matter.modal-matter-instruction', {{ json_encode(['id' => $matter->id]) }})">
+                                Instruksi
+                            </x-button.white>
                             <x-button.white class="text-red-500 text-left border-0 w-full btn-dropdown"
                                 wire:click="$emit('openModal', 'matter.modal-delete', {{ json_encode([
                                     'chapter' => $chapterId,
@@ -76,7 +84,7 @@
                             </x-button.white>
                         </x-slot>
                     </x-jet-dropdown>
-                @endrole
+                @endif
             </div>
         @endif
     @empty

@@ -14,14 +14,14 @@
                 @endforelse
             </div>
 
-            @role('admin')
+            @if (auth()->user()->hasRole('admin'))
                 <div class="fixed bottom-10 right-10">
                     <x-button.primary class="text-2xl md:text-4xl lg:text-6xl rounded-full"
                         wire:click="$emit('openModal', 'language.modal-language')">
                         <i class="fas fa-plus"></i>
                     </x-button.primary>
                 </div>
-            @endrole
+            @endif
         </div>
 
         <script>
@@ -33,7 +33,7 @@
         </script>
     </div>
 
-    @role('user')
+    @if (auth()->user()->hasRole('user'))
         @livewire('user.planner')
-    @endrole
+    @endif
 </div>

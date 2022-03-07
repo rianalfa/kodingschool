@@ -20,43 +20,69 @@ class Matter extends Controller
         }
     }
 
-    public static function getCode($str) {
-        $arr = [];
-        $i=0;
-        $str = strtok($str, "```");
-        while ($str !== false) {
-            if ($i%2 == 0) {
-                $i++;
-            } else {
-                array_push($arr, $str);
-                $i++;
-            }
-
-            $str = strtok("```");
-        }
-
-        return $arr;
-    }
-
-    public static function checkAnswer($matter, $content) {
+    public static function checkAnswer($matter, $content, $hashValue=0) {
         $type = $matter->chapter->language->type;
 
         $path = "/answers/users/".$matter->chapter->language->id.'/'.$matter->chapter->id."/".$matter->id;
         Storage::disk('local')->put('.'.$path.'/'.auth()->user()->username.'.'.$type, $content);
 
+        $userOutput = "";
+        $correctOutput = "";
+
         switch ($type) {
             case "cpp":
-                exec("g++ ../storage/app".$path."/".auth()->user()->username.".cpp -O3 -o ../storage/app".$path."/".auth()->user()->username.".exe  2>&1", $outputCompiler);
+                exec("cd .. && cd storage/app".$path." && g++ ".auth()->user()->username.".cpp -O3 -o ".auth()->user()->username.".exe  2>&1", $outputCompiler);
+                if (empty($outputCompiler)) {
+                    exec("cd .. && cd storage/app".$path." && cppcheck ".auth()->user()->username.".cpp 2>&1", $outputChecker);
+                }
+                exec("cd .. && cd storage/app".$path." && ".auth()->user()->username.".exe", $userOutput);
+                exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && ".$matter->id.".exe", $correctOutput);
+                break;
+            case "pas":
+                exec("cd .. && cd storage/app".$path." && fpc ".auth()->user()->username.".pas 2>&1", $outputCompiler);
+                if ($outputCompiler[sizeof($outputCompiler)-2]=="Linking ".auth()->user()->username.".exe") $outputCompiler="";
+                if (empty($outputCompiler)) {
+                    exec("cd .. && cd storage/app".$path." && palcmd ".auth()->user()->username.".pas 2>&1", $outputChecker);
+                }
+                exec("cd .. && cd storage/app".$path." && ".auth()->user()->username.".exe", $userOutput);
+                exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && ".$matter->id.".exe", $correctOutput);
+                break;
+            case "java":
+                exec("cd .. && cd storage/app".$path." && javac ".auth()->user()->username.".java 2>&1", $outputCompiler);
+                if (empty($outputCompiler)) {
+                    exec("cd .. && cd storage/app/answers/users/".$matter->chapter->language->id." && java -jar checkstyle-9.3-all.jar -c /google_checks.xml ".$matter->chapter->id."/".$matter->id."/".auth()->user()->username.".java 2>&1", $outputChecker);
+                }
+
+                exec("cd .. && cd storage/app".$path." && java ".auth()->user()->username, $userOutput);
+                exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && java java".$matter->id, $correctOutput);
+                break;
+            case "php":
+                exec("cd .. && cd storage/app".$path." && psalm ".auth()->user()->username.".php 2>&1", $outputChecker);
+                exec("cd .. && cd storage/app".$path." && php ".auth()->user()->username.".php 2>&1", $userOutput);
+                exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && php ".$matter->id.".php", $correctOutput);
+                break;
+            case "js":
+                exec("cd .. && cd storage/app".$path." && npx eslint ".auth()->user()->username.".js 2>&1", $outputCompiler);
+                if (!empty($outputCompiler) && is_array($outputCompiler)) {
+                    $outputCompiler = array_slice($outputCompiler, 1);
+                    $outputCompiler[0] = auth()->user()->username.".js";
+                }
+
+                exec("cd .. && cd storage/app".$path." && node ".auth()->user()->username.".js", $userOutput);
+                exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && node ".$matter->id.".js", $correctOutput);
+                break;
+            case "html":
+                $userOutput = (string)$hashValue;
+                $correctOutput = Storage::get('./answers/corrects/'.$matter->chapter->language->id.'/'.$matter->chapter->id.'/'.$matter->id.'.txt');
                 break;
         }
 
         if (!empty($outputCompiler)) {
-            Storage::disk('local')->delete('.'.$path.'/'.auth()->user()->username.'.'.$type);
             $output = "";
 
             if (is_array($outputCompiler)) {
                 foreach ($outputCompiler as $compiler) {
-                    $output .= $compiler;
+                    $output .= $compiler."\r\n";
                 }
             } else {
                 $output = $outputCompiler;
@@ -65,21 +91,28 @@ class Matter extends Controller
                 'status' => '2',
                 'output' => $output,
             ];
-        }
-
-        exec("cd .. && cd storage/app".$path." && ".auth()->user()->username.".exe", $userOutput);
-        exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && ".$matter->id.".exe", $correctOutput);
-
-        if ($userOutput===$correctOutput) {
-            return [
-                'status' => '1',
-                'output' => $userOutput,
-            ];
         } else {
-            return [
-                'status' => '0',
-                'output' => $userOutput,
-            ];
+            $output = "";
+
+            if (is_array($userOutput)) {
+                foreach ($userOutput as $compiler) {
+                    $output .= $compiler."\r\n";
+                }
+            } else {
+                $output = $userOutput;
+            }
+
+            if ($userOutput===$correctOutput) {
+                return [
+                    'status' => '1',
+                    'output' => $output,
+                ];
+            } else {
+                return [
+                    'status' => '0',
+                    'output' => $output,
+                ];
+            }
         }
     }
 
@@ -91,6 +124,7 @@ class Matter extends Controller
         $matter = ModelsMatter::whereId($matterId)->first();
         $study = Study::where('user_id', $user->id)->where('matter_id', $matterId);
         $point = $point + $study->first()->point;
+        $levelUp="no";
 
         if ($study->first()->finished=='0') {
             $result = Result::where('user_id', $user->id)->where('date', date('Y-m-d'))->first();
@@ -114,6 +148,8 @@ class Matter extends Controller
                     'point' => $point,
                     'level_id' => $level->id+1,
                 ]);
+
+                $levelUp = "yes";
             } else {
                 $user->detail()->first()->update([
                     'point' => $point,
@@ -128,6 +164,7 @@ class Matter extends Controller
             ]);
 
         Matter::checkAnswer($matter, $userAnswer);
+        return $levelUp;
     }
 
     public static function checkNextLevel() {

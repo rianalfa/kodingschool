@@ -32,7 +32,7 @@
         @livewire('livewire-ui-modal')
 
         @livewireScripts
-            <script src="{{ mix('js/livewire-handler.js') }}"></script>
+        <script src="{{ mix('js/livewire-handler.js') }}" defer></script>
         @stack('scripts')
     </body>
 </html>

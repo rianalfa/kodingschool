@@ -39,7 +39,7 @@
                                     <p class="self-center pl-4">Jumlah Materi: {{ $chapter->matters()->count() }}</p>
                                 </div>
 
-                                @role('admin')
+                                @if(auth()->user()->hasRole('admin'))
                                     <x-jet-dropdown align="right" width="48">
                                         <x-slot name="trigger">
                                             <x-button.white class="float-right btn-dropdown"><i class="fas fa-ellipsis-v"></i></x-button.white>
@@ -58,7 +58,7 @@
                                             </x-button.white>
                                         </x-slot>
                                     </x-jet-dropdown>
-                                @endrole
+                                @endif
                             </div>
                             <p class="text-clip overflow-hidden w-full h-1/3">{{ $chapter->description }}</p>
 

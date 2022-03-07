@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Language;
 
 use App\Models\Chapter;
 use App\Models\Language;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
 
@@ -31,6 +32,10 @@ class ModalDelete extends ModalComponent
             Chapter::where('language_id', $this->languageId)->delete();
             $deleted = Language::whereId($this->languageId)->delete();
             if ($deleted) {
+                if (Storage::exists('images/languages/'.$this->languageId.'.jpeg')) {
+                    Storage::delete('images/languages/'.$this->languageId.'.jpeg');
+                }
+
                 $this->emit('success', 'Bahasa '.$this->name.' berhasil dihapus.');
             } else {
                 $this->emit('error', 'Bahasa '.$this->name.' gagal dihapus.');

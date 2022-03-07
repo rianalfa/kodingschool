@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Show extends Component
 {
@@ -23,6 +24,8 @@ class Show extends Component
         'nextMatter' => 'next',
         'correctAnswer' => 'correctAnswer',
         'showHint' => 'showHint',
+        'nextMatter' => 'nextMatter',
+        'javaScriptAnswer' => 'javaScriptAnswer',
     ];
 
     public function mount($id) {
@@ -30,66 +33,107 @@ class Show extends Component
         ControllersMatter::checkNewStudy($id);
 
         $study = Study::where('user_id', auth()->user()->id)->where('matter_id', $id)->first();
-        $this->question = !empty($study->user_answer) ? $study->user_answer : $this->matter->question;
+        $this->question = !empty($study->user_answer) ? $study->user_answer : Matter::whereId($id)->first()->question;
 
         $this->reload($id);
     }
 
+    public function initiateViewer() {
+        if ($this->matter->instruction!="") {
+            $this->emit('viewer', 'matter', Str::markdown($this->matter->matter).'<div class="w-full mt-6">
+                <div class="bg-gray-300 rounded-t-lg py-2 px-4">
+                    <p class="text-gray-800 text-lg font-bold">Instruksi</p>
+                </div>
+                <div class="bg-white border-x-2 border-b-2 border-gray-300 rounded-b-lg py-2 px-2">
+                    <p class="text-justify px-4">'.Str::markdown($this->matter->instruction).'</p></div>
+                </div>');
+        } else {
+            $this->emit('viewer', 'matter', Str::markdown($this->matter->matter));
+        }
+    }
+
+    public function initiateCodeEditor() {
+        $this->emit('codeEditor', 'code', $this->matter->chapter->language->mode);
+    }
+
     public function reload($id) {
         $this->matter = Matter::whereId($id)->first();
+        if ($this->matter->instruction==null) $this->matter->instruction="";
 
-        $this->matterCode();
         $this->nextLevel = ControllersMatter::checkNextLevel();
     }
 
-    public function matterCode() {
-        $this->matter->code = ControllersMatter::getCode($this->matter->matter);
-        $this->matter->codeInstruction = ControllersMatter::getCode($this->matter->instruction);
-        $this->matter->instruction = explode("```", $this->matter->instruction);
-        $this->matter->matter = explode ("```", $this->matter->matter);
+    public function nextMatter($question) {
+        if ($this->matter->chapter->language->type!="html") {
+            $this->next($question);
+        } else {
+            $this->nextHTML($question);
+        }
     }
 
-    public function next() {
-        if (!empty($this->matter->question)) {
-            $output = ControllersMatter::checkAnswer($this->matter, $this->question);
+    public function next($question, $hashValue=0) {
+        $levelUp="no";
+        if (!empty($this->matter->instruction)) {
+            $this->question = $question;
+
+            $output = ControllersMatter::checkAnswer($this->matter, $this->question, $hashValue);
 
             $study = Study::where('matter_id', $this->matter->id)->where('user_id', auth()->user()->id)->first();
             $study->update(['user_answer' => $this->question]);
 
             if ($output['status']==="1") {
-                $this->emitTo('matter.shell', 'reloadShell', $output['output'][0]);
+                $this->emitTo('matter.shell', 'reloadShell', $output['output']);
+                $this->emitTo('matter.iframe', 'reloadIframe', "");
 
-                ControllersMatter::correctAnswer($this->matter->id, $this->question);
+                $levelUp = ControllersMatter::correctAnswer($this->matter->id, $this->question);
                 $this->emit('success', 'Jawabanmu benar.');
                 $this->correctAnswer();
             } elseif ($output['status']==="0") {
-                $this->emit("consolelog", 'reloadShell', $output['output'][0]);
-                $study->update(['point' => ($study->point - 25) ]);
+                if ($study->finished=="0") $study->update(['point' => ($study->point - 25) ]);
+                $this->emitTo('matter.shell', 'reloadShell', $output['output']);
+                $this->emitTo('matter.iframe', 'reloadIframe', $question);
 
                 $this->emit('error', 'Jawabanmu belum tepat.');
                 $this->reload($this->matter->id);
             } else {
-                $study = Study::where('matter_id', $this->matter->id)->where('user_id', auth()->user()->id)->first();
-                $study->update(['point' => ($study->point - 25) ]);
-
-                $this->emit('swal', 'error', $output['output']);
+                $this->emitTo('matter.shell', 'reloadShell', $output['output']);
                 $this->emit('error', 'Jawabanmu belum tepat.');
                 $this->reload($this->matter->id);
             }
         } else {
-            ControllersMatter::correctAnswer($this->matter->id, $this->point);
+            $levelUp = ControllersMatter::correctAnswer($this->matter->id, $this->point);
             $this->correctAnswer();
+        }
+
+        if ($levelUp=="yes") {
+            $this->emit('swal', 'success', 'Yeay! Kau naik level.');
         }
     }
 
-    public function correctAnswer() {
-        $this->matter = Matter::next($this->matter->number, $this->matter->chapter_id);
-        $study = Study::where('user_id', auth()->user()->id)->where('matter_id', $this->matter->id)->first();
-        $this->question = !empty($study->user_answer) ? $study->user_answer : $this->matter->question;
+    public function nextHTML($question) {
+        $this->emit('javaScriptChecker', $question);
+    }
 
-        if ($this->matter == 'finished') {
+    public function javaScriptAnswer($question, $hashValue) {
+        Storage::disk('local')->put('./answers/users/'.$this->matter->chapter->language->id.'/'.$this->matter->chapter->id.'/'.$this->matter->id.'/'.auth()->user()->username.'.txt', $hashValue);
+        $this->next($question, $hashValue);
+    }
+
+    public function correctAnswer() {
+        $matter = Matter::next($this->matter->number, $this->matter->chapter_id);
+
+        if ($matter[0] == 'finished') {
             $this->emit('swal', 'success', 'Kamu telah menyelesaikan seluruh materi yang ada pada bahasa ini!');
         } else {
+            $this->matter = $matter[1];
+            if ($this->matter->instruction==null) $this->matter->instruction="";
+
+            $study = Study::where('user_id', auth()->user()->id)->where('matter_id', $this->matter->id)->first();
+            $this->question = !empty($study->user_answer) ? $study->user_answer : $this->matter->question;
+
+            $this->initiateViewer();
+            $this->initiateCodeEditor();
+
             ControllersMatter::checkNewStudy($this->matter->id);
             $this->emitTo('matter.question', 'reloadQuestion', $this->matter->id);
             $this->reload($this->matter->id);

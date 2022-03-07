@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="grid grid-cols-3 gap-2">
-        @role('user')
+        @if (auth()->user()->hasRole('user'))
             <div class="col-span-2">
                 @livewire('language.grid')
             </div>
@@ -11,6 +11,6 @@
             <div class="col-span-3">
                 @livewire('language.grid')
             </div>
-        @endrole
+        @endif
     </div>
 </x-app-layout>
