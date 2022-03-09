@@ -1,3 +1,3 @@
 <div class="uppercase font-bold text-xl">
-    KS
+    Koding School
 </div>

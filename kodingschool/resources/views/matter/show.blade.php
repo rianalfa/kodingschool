@@ -1,6 +1,6 @@
-<div class="flex relative h-full pb-12">
+<div class="flex relative h-max lg:h-full pb-12">
     <div class="grid grid-cols-{{ !empty($matter->instruction) ? '3' : '2' }} gap-0 w-full">
-        <div class="bg-sky-100 h-full overflow-y-auto py-6
+        <div class="col-span-3 lg:col-span-1 bg-sky-100 h-80 lg:h-full overflow-y-auto py-6
             scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500">
 
             <p class="text-sm text-gray-400 mb-0 px-6">{{ $matter->chapter()->first()->name }}</p>
@@ -14,7 +14,7 @@
         </div>
 
         @if (!empty($matter->instruction))
-            <div class="h-full overflow-y-hidden" wire:ignore>
+            <div class="col-span-3 lg:col-span-1 h-80 lg:h-full overflow-y-hidden" wire:ignore>
                 <x-input.textarea id="code" wire:model.defer="question" wire:init="initiateCodeEditor"></x-input.textarea>
             </div>
         @endif
@@ -30,33 +30,35 @@
             </div>
         @endif
 
-        @if (in_array($matter->chapter->language->type, ['pas', 'cpp', 'java', 'js', 'php']))
-            @livewire('matter.shell', ['text' => ''])
-        @else
-            @livewire('matter.iframe', ['text' => $question])
-        @endif
+        <div class="col-span-3 lg:col-span-1 h-80 lg:h-full">
+            @if (in_array($matter->chapter->language->type, ['pas', 'cpp', 'java', 'js', 'php']))
+                @livewire('matter.shell', ['text' => ''])
+            @else
+                    @livewire('matter.iframe', ['text' => $question])
+            @endif
+        </div>
     </div>
 
-    <div class="bg-sky-700 absolute bottom-0 left-0 w-full h-12 px-6">
+    <div class="bg-sky-700 absolute bottom-0 left-0 w-full h-max lg:h-12 px-6 py-2 lg:py-0">
         <div class="grid grid-cols-3 gap-0 w-full h-full">
-            <div class="flex items-center">
+            <div class="flex items-center col-span-3 lg:col-span-1 my-1 lg:my-0">
                 <p class="text-white font-bold mb-0">
-                    {{ auth()->user()->username }}
+                    {{ '@'.auth()->user()->username }}
                 </p>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center col-span-3 lg:col-span-1 my-1 lg:my-0">
                 <div class="grid grid-cols-6 gap-0 w-full items-center">
-                    <div class="text-white font-bold mb-0">
+                    <div class="col-span-2 lg:col-span-1 text-white font-bold mb-0">
                         Level {{ auth()->user()->detail()->first()->level()->first()->id }}
                     </div>
-                    <div class="col-span-5 bg-gray-200 rounded-lg h-4">
+                    <div class="col-span-4 lg:col-span-5 bg-gray-200 rounded-lg h-4">
                         <div class="bg-sky-500 rounded-lg h-4" style="width: {{ $nextLevel }}%"></div>
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-end" wire:ignore>
+            <div class="flex items-center justify-between lg:justify-end col-span-3 lg:col-span-1 my-1 lg:my-0" wire:ignore>
                 <div x-data="{ open: false }" class="relative">
-                    <ul x-show="open" @click.away="open = false" class="bg-white rounded absolute bottom-6 right-0 w-48 p-2">
+                    <ul x-show="open" @click.away="open = false" class="bg-white rounded absolute bottom-6 left-0 lg:right-0 w-48 p-2">
                         <li><p class="text-sm">Apakah Anda yakin ingin melihat hint jawaban?</p></li>
                         <li class="flex justify-end mt-2"><x-button.warning class="text-sm ml-auto py-0"
                             wire:click="$emit('openModal', 'matter.modal-hint', {{ json_encode(['hint' => $matter->hint]) }})">

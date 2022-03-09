@@ -4,7 +4,7 @@
             <button
                 class="relative flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition p-1"
                 x-on:click="showUnreadNotifications = false; setTimeout(() => {Livewire.emit('readNotifications');}, 2000);">
-                <x-icons.bell stroke-width="1" width="24" height="24"></x-icons.bell>
+                <i class="fa fa-bell text-white w-7 h-7"></i>
                 @if ($totalUnreadNotifications)
                     <div x-show="showUnreadNotifications"
                         class="absolute font-bold -right-1 -top-2 text-xs bg-yellow-500 text-white rounded-full w-6 h-6 flex justify-center items-center transform scale-75">

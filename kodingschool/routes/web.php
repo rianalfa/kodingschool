@@ -84,9 +84,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::name('study.')->group(function() {
         Route::get('/study', function() {
-            $last = Study::latest()->firstOr(function () {
-                return Language::find(1);
-            })->matter()->chapter()->first()->language()->first();
+            $last = Study::where('user_id', auth()->user()->id)->latest()->first();
+            if (empty($last)) {
+                $last = Language::find(1);
+            } else {
+                $last = $last->matter()->chapter->language;
+            }
+
             return redirect()->to('/language/'.$last->id);
         })->name('last');
 

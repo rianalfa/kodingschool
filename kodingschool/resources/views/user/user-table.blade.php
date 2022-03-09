@@ -30,3 +30,10 @@
     <x-anchor.black href="{{ route('user.profile', $row->id) }}">Detail</x-anchor.black>
 </x-livewire-tables::table.cell>
 
+<x-livewire-tables::table.cell>
+    <x-badge.primary class="px-2 py-1 {{ auth()->user()->hasRole('super') ? 'cursor-pointer hover:scale-110' : 'cursor-default' }}"
+        wire:click="$emit('{{ auth()->user()->hasRole('super') ? 'openModal' : '' }}', 'user.role-modal', {{ json_encode(['id' => $row->user->id]) }})">
+        {{ $row->user->hasRole('user') ? 'user' : 'admin' }}
+    </x-badge.primary>
+</x-livewire-tables::table.cell>
+

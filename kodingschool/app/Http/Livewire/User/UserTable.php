@@ -34,6 +34,7 @@ class UserTable extends DataTableComponent
             Column::make("Updated at", "updated_at")
                 ->sortable(),
             Column::make("Detail"),
+            Column::make("Posisi"),
         ];
     }
 

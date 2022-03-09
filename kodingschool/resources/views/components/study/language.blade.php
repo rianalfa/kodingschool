@@ -23,8 +23,8 @@
         @endif
     </div>
 
-    <img src="{{ asset('storage/images/languages/'.$language->id.'.jpeg') }}" class="object-scale-down mx-auto my-3 lg:w-4/5 h-80"
-        onerror="this.src='{{ asset('images/nodejs.png') }}'" />
+    <img src="{{ asset('storage/images/languages/'.$language->id.'.png') }}" class="object-scale-down mx-auto my-3 w-2/5 lg:w-4/5"
+        onerror="this.src='{{ asset('images/KS.png') }}'" />
 
     @if (!empty($language->total))
         <div class="bg-gray-200 rounded-full w-1/2 mx-auto mt-6">

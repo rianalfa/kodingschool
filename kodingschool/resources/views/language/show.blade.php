@@ -4,7 +4,7 @@
         <x-separator />
     </div>
 
-    <div class="col-span-2">
+    <div class="col-span-3 lg:col-span-2 max-h-80 lg:max-h-full overflow-y-auto lg:overflow-y-visible">
         @forelse ($chapters as $chapter)
             @php
                 $matters = $chapter->matters();
@@ -18,9 +18,9 @@
             @endphp
             <x-card.base class="mb-8">
                 <div class="grid grid-cols-3 gap-4">
-                    <div class="col-span-1">
+                    <div class="col-span-3 lg:col-span-1">
                         <div class="flex flex-col items-center justify-center bg-sky-100 rounded py-8">
-                            <img src="{{ asset('images/nodejs.png') }}" class="w-1/2 object-contain">
+                            <img src="{{ asset('storage/images/languages/'.$chapter->language->id.'.png') }}" class="w-1/2 object-contain">
                             <p class="text-sky-500 font-bold mt-4">Progress</p>
                             <div class="bg-gray-200 rounded-full w-1/2">
                                 @if (!empty($progress))
@@ -31,12 +31,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-3 lg:col-span-2">
                         <div class="flex flex-col justify-around h-full px-4">
                             <div class="flex content-center justify-between w-full">
-                                <div class="flex">
-                                    <p class="text-xl font-bold self-center border-r-2 pr-4">{{ $chapter->name }}</p>
-                                    <p class="self-center pl-4">Jumlah Materi: {{ $chapter->matters()->count() }}</p>
+                                <div class="flex flex-col lg:flex-row w-full">
+                                    <p class="text-xl font-bold self-center lg:border-r-2 lg:pr-4">{{ $chapter->name }}</p>
+                                    <p class="self-center lg:pl-4">Jumlah Materi: {{ $chapter->matters()->count() }}</p>
                                 </div>
 
                                 @if(auth()->user()->hasRole('admin'))
@@ -91,9 +91,11 @@
         @endforelse
     </div>
 
-    @if ($activeChapter!=null)
-        @livewire('chapter.show', ['chapterId' => $activeChapter])
-    @endif
+	<div class="col-span-3 lg:col-span-1">
+    	@if ($activeChapter!=null)
+        	@livewire('chapter.show', ['chapterId' => $activeChapter])
+    	@endif
+	</div>
 
     <div class="fixed bottom-10 right-10">
         <x-button.primary class="text-2xl md:text-4xl lg:text-6xl rounded-full"

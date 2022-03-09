@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="initData()">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Koding School') }}</title>
+        <link rel="icon" href="{{ asset('images/KS.png') }}">
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
@@ -18,10 +19,11 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased overflow-y-hidden">
-        <div class="flex h-screen bg-gray-100 overflow-y-auto">
+        <div class="flex h-screen bg-gray-100 overflow-y-auto" :class="{ 'overflow-hidden': isSideMenuOpen }">
+            <x-sidebar.nav></x-sidebar.nav>
             <div class="flex flex-col flex-1 overflow-x-hidden">
                 <x-header.nav title=""></x-header.nav>
-                <main class="h-full overflow-y-hidden">
+                <main class="h-full overflow-y-auto lg:overflow-y-hidden">
                     {{ $slot }}
                 </main>
             </div>

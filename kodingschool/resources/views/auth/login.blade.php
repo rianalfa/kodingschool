@@ -1,11 +1,11 @@
 <x-app-layout>
     <div class="grid grid-cols-3 gap-2">
-        <div class="col-span-2">
+        <div class="col-span-3 lg:col-span-2">
             <x-card.base title="Koding School">
-                Ini penjelasan
+                Koding School merupakan sebuah aplikasi berbasis web yang menyediakan layanan pembelajaran atau <span class="italic">e-learning</span> yang dapat digunakan sebagai penunjang kebutuhan sarana pembelajaran bagi mahasiswa Politeknik Statistika STIS.
             </x-card.base>
         </div>
-        <div>
+        <div class="col-span-3 lg:col-span-1">
             <x-card.base title="Login">
                 <div class="flex">
                     <form class="w-full" method="POST" action="{{ route('login') }}">

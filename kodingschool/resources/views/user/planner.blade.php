@@ -20,7 +20,7 @@
             @endphp
 
             @if ($disabled==true)
-                <x-button.white class="text-lg font-bold uppercase border-b-4 mx-0.5 {{ $class }}" wire:click="setPlanner('{{ $day }}')" disabled>
+                <x-button.white class="text-base lg:text-lg font-bold uppercase border-b-4 mx-0.5 {{ $class }}" wire:click="setPlanner('{{ $day }}')" disabled>
                     {{substr($day,0,1)}}
                 </x-button.white>
             @else

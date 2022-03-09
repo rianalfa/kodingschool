@@ -1,47 +1,78 @@
-<div>
+<div class="w-full lg:w-5/6 mx-auto">
     <div class="flex justify-center mb-4">
-        <x-button.black class="focus:bg-gray-500 rounded-r-none w-28"
+        <x-button.black class="focus:bg-gray-500 rounded-r-none w-28{{ $type=='day' ? ' bg-gray-500' : '' }}"
             wire:click="boardChange('day')">Hari Ini</x-button.black>
-        <x-button.black class="focus:bg-gray-500 rounded-none w-28"
+        <x-button.black class="focus:bg-gray-500 rounded-none w-28{{ $type=='month' ? ' bg-gray-500' : '' }}"
             wire:click="boardChange('month')">Bulan Ini</x-button.black>
-        <x-button.black class="focus:bg-gray-500 rounded-l-none w-28"
+        <x-button.black class="focus:bg-gray-500 rounded-l-none w-28{{ $type=='total' ? ' bg-gray-500' : '' }}"
             wire:click="boardChange('total')">Sepanjang Waktu</x-button.black>
     </div>
 
-    <div class="w-5/6 max-w-5xl mx-auto">
-        <x-card.base class="sm:py-9">
-            @forelse ($leaderboard as $leader)
-                @if ($loop->iteration==1)
-                    <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
-                        <p class="fas fa-medal text-5xl text-yellow-400 m-auto"></p>
-                        <p class="text-5xl font-bold text-center">{{ $leader->name }}</p>
-                        <p class="text-5xl font-bold text-center">{{ $leader->points }}</p>
-                    </div>
-                @elseif ($loop->iteration==2)
-                    <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
-                        <p class="fas fa-medal text-3xl text-slate-300 m-auto"></p>
-                        <p class="text-3xl font-bold text-center">{{ $leader->name }}</p>
-                        <p class="text-3xl font-bold text-center">{{ $leader->points }}</p>
-                    </div>
-                @elseif ($loop->iteration==3)
-                    <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
-                        <p class="fas fa-medal text-xl text-orange-700 m-auto"></p>
-                        <p class="text-xl font-bold text-center">{{ $leader->name }}</p>
-                        <p class="text-xl font-bold text-center">{{ $leader->points }}</p>
-                    </div>
+    <div class="grid grid-cols-4 gap-4">
+        <div class="col-span-4 lg:col-span-3 h-80 lg:h-max overflow-y-auto lg:overflow-y-visible">
+            <x-card.base class="sm:py-9">
+                @forelse ($leaderboard as $leader)
+                    @if ($loop->iteration==1)
+                        <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
+                            <p class="fas fa-medal text-3xl lg:text-5xl text-yellow-400 m-auto"></p>
+                            <div class="flex flex-col lg:flex-row col-span-2">
+                                <p class="text-2xl lg:text-5xl font-bold text-center lg:w-1/2">{{ $leader->name }}</p>
+                                <p class="text-2xl lg:text-5xl font-bold text-center lg:w-1/2">{{ $leader->points }}</p>
+                            </div>
+                        </div>
+                        <div class="pb-5">
+                            <div class="border-t border-gray-300"></div>
+                        </div>
+                    @elseif ($loop->iteration==2)
+                        <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
+                            <p class="fas fa-medal text-2xl lg:text-3xl text-slate-300 m-auto"></p>
+                            <div class="flex flex-col lg:flex-row col-span-2">
+                                <p class="text-xl lg:text-3xl font-bold text-center lg:w-1/2">{{ $leader->name }}</p>
+                                <p class="text-xl lg:text-3xl font-bold text-center lg:w-1/2">{{ $leader->points }}</p>
+                            </div>
+                        </div>
+                        <div class="pb-5">
+                            <div class="border-t border-gray-300"></div>
+                        </div>
+                    @elseif ($loop->iteration==3)
+                        <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
+                            <p class="fas fa-medal text-xl lg:text-xl text-amber-700 m-auto"></p>
+                            <div class="flex flex-col lg:flex-row col-span-2">
+                                <p class="text-lg lg:text-xl font-bold text-center lg:w-1/2">{{ $leader->name }}</p>
+                                <p class="text-lg lg:text-xl font-bold text-center lg:w-1/2">{{ $leader->points }}</p>
+                            </div>
+                        </div>
+                        <div class="pb-5">
+                            <div class="border-t border-gray-300"></div>
+                        </div>
+                    @else
+                        <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
+                            <p class="font-bold text-center">{{ $loop->iteration }}</p>
+                            <div class="flex flex-col lg:flex-row col-span-2">
+                                <p class="font-bold text-center lg:w-1/2">{{ $leader->name }}</p>
+                                <p class="font-bold text-center lg:w-1/2">{{ $leader->points }}</p>
+                            </div>
+                        </div>
+                        <div class="pb-5">
+                            <div class="border-t border-gray-300"></div>
+                        </div>
+                    @endif
+                @empty
+                    <p class="text-5xl lg:text-9xl text-red-500 text-center my-5">
+                        <i class="fas fa-user-times"></i>
+                    </p>
+                    <p class="text-xl font-bold text-center">Sayang sekali, belum ada peringkat untuk hari ini :(</p>
+                @endforelse
+            </x-card.base>
+        </div>
+        <div class="col-span-4 lg:col-span-1">
+            <x-card.base>
+                @if ($userRank!==false)
+                    Kamu saat ini merupakan peringkat <span class="font-bold">{{ $userRank+1 }}</span>
                 @else
-                    <div class="grid grid-cols-3 gap-2 mx-auto mb-4">
-                        <p class="font-bold text-center">{{ $loop->iteration }}</p>
-                        <p class="font-bold text-center">{{ $leader->name }}</p>
-                        <p class="font-bold text-center">{{ $leader->points }}</p>
-                    </div>
+                    Kamu belum termasuk ke dalam 100 besar :(
                 @endif
-            @empty
-                <p class="text-9xl text-red-500 text-center my-5">
-                    <i class="fas fa-user-times"></i>
-                </p>
-                <p class="text-xl font-bold text-center">Sayang sekali, belum ada peringkat untuk hari ini :(</p>
-            @endforelse
-        </x-card.base>
+            </x-card.base>
+        </div>
     </div>
 </div>

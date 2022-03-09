@@ -4,6 +4,16 @@ require('@fortawesome/fontawesome-free/js/all.min.js');
 //AlpineJS
     import Alpine from 'alpinejs';
     window.Alpine = Alpine;
+    Alpine.data('initData', () => ({
+            isSideMenuOpen: false,
+            toggleSideMenu() {
+                this.isSideMenuOpen = !this.isSideMenuOpen
+            },
+            closeSideMenu() {
+                this.isSideMenuOpen = false
+            },
+        })
+    );
     Alpine.start();
     window.$ = require( "jquery" );
 
