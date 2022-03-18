@@ -80,7 +80,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/dashboard', Grid::class)->name('dashboard');
 
-    Route::get('/profile/{id?}', Profile::class)->name('user.profile');
+    Route::get('/profile/{username?}', Profile::class)->name('user.profile');
 
     Route::name('study.')->group(function() {
         Route::get('/study', function() {

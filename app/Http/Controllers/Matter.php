@@ -20,7 +20,7 @@ class Matter extends Controller
         }
     }
 
-    public static function checkAnswer($matter, $content, $hashValue=0) {
+    public static function checkAnswer($matter, $content, $isEq=false) {
         $type = $matter->chapter->language->type;
 
         $path = "/answers/users/".$matter->chapter->language->id.'/'.$matter->chapter->id."/".$matter->id;
@@ -72,8 +72,8 @@ class Matter extends Controller
                 exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && node ".$matter->id.".js", $correctOutput);
                 break;
             case "html":
-                $userOutput = (string)$hashValue;
-                $correctOutput = Storage::get('./answers/corrects/'.$matter->chapter->language->id.'/'.$matter->chapter->id.'/'.$matter->id.'.txt');
+                $userOutput = "true";
+                $correctOutput = $isEq==true ? "true" : "false";
                 break;
         }
 

@@ -44,9 +44,6 @@ class ModalMatterInstruction extends ModalComponent
 
             if (!empty($this->answer)) {
                 $this->matter->answer = $this->answer->get();
-                if ($this->matter->chapter->language->type=="html") {
-                    $this->emit('javaScriptChecker', $this->matter->answer);
-                }
             }
 
             $saved = $this->matter->save();
@@ -67,10 +64,6 @@ class ModalMatterInstruction extends ModalComponent
             $this->emit('error', 'Anda bukan admin');
         }
         $this->closeModal();
-    }
-
-    public function javaScriptAnswer($hashCode) {
-        Storage::disk('local')->put('./answers/corrects/'.$this->matter->chapter->language->id.'/'.$this->matter->chapter->id.'/'.$this->matter->id.'.txt', $hashCode);
     }
 
     public static function modalMaxWidth(): string

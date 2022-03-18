@@ -1,5 +1,6 @@
 // Notyf
 const { default: Editor } = require("@toast-ui/editor");
+const { isElement, isEqual } = require("lodash");
 const notification = require("notyf");
     const notyf = new notification.Notyf({ duration: 3000 });
 
@@ -83,17 +84,23 @@ const notification = require("notyf");
         }
     });
 
-//JavaScript Answer Checker
-    Livewire.on('javaScriptChecker', (text) => {
-        let doc = document.createElement('html');
-        doc.innerHTML=text;
-
-        var hashValue=0;
-        var i, code;
-        for (i=0; i<doc.innerText.length; i++) {
-            code = doc.innerText.charCodeAt(i);
-            hashValue = hashValue * 32 - hashValue + code;
-            hashValue |= 0;
+    Livewire.on('runScript', () => {
+        if (codeEditor) {
+            Livewire.emit('showScript', codeEditor.getValue());
         }
-        Livewire.emit('javaScriptAnswer', text, hashValue);
+    });
+
+//HTML Differ Checker
+    const HtmlDiffer = require('html-differ').HtmlDiffer;
+    Livewire.on('htmldiffer', (html1, html2) => {
+        htmlDiffer = new HtmlDiffer({
+            preset: 'bem',
+            ignoreAttributes: ['for'],
+            ignoreWhitespaces: true,
+            ignoreComments: true,
+        });
+
+        isEq = htmlDiffer.isEqual(html1, html2);
+        console.log(isEq);
+        Livewire.emit('next', html1, isEq);
     });

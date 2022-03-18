@@ -30,6 +30,7 @@
         "@toast-ui/editor-plugin-code-syntax-highlight": "^3.0.0",
         "@toast-ui/editor-plugin-color-syntax": "^3.0.2",
         "codemirror": "^5.65.2",
+        "html-differ": "^1.4.0",
         "jquery": "^3.6.0",
         "notyf": "^3.10.0",
         "shiki": "^0.10.1"

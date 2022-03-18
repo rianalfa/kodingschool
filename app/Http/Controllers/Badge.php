@@ -196,11 +196,11 @@ class Badge extends Controller
             $badgeId = ModelsBadge::where('type', '5')
                                 ->where('grade', '3')
                                 ->first()->id;
-        } elseif ($result->point>=5000) {
+        } elseif ($result->point>=7500) {
             $badgeId = ModelsBadge::where('type', '5')
                                 ->where('grade', '2')
                                 ->first()->id;
-        } elseif ($result->point>=2000) {
+        } elseif ($result->point>=5000) {
             $badgeId = ModelsBadge::where('type', '5')
                                 ->where('grade', '1')
                                 ->first()->id;

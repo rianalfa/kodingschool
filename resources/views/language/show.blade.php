@@ -14,6 +14,8 @@
                         if (!empty($matter->study(auth()->user()->id))) $count++;
                     }
                     $progress = $matters->count()!=0 ? floor($count/$matters->count()*100) : 0;
+                } else {
+                    $progress = 0;
                 }
             @endphp
             <x-card.base class="mb-8">
@@ -71,12 +73,19 @@
                                             <x-anchor.white class="text-sky-500 border-sky-500 ml-2"
                                                 href="{{ route('study.matter', $matters->first()->id) }}">Lihat Kembali</x-anchor.white>
                                         @else
+                                            @php
+                                                $latestStudy = \app\Models\Matter::join('studies', 'matters.id', '=', 'studies.matter_id')
+                                                                                ->where('chapter_id', $chapter->id)
+                                                                                ->where('user_id', auth()->user()->id)
+                                                                                ->orderBy('number', 'desc')
+                                                                                ->first();
+                                            @endphp
                                             <x-anchor.primary class="ml-2"
-                                                href="{{ route('study.matter', $matters->orderBy('id', 'desc')->first()->id) }}">Lanjutkan Pelajaran</x-anchor.primary>
+                                                href="{{ route('study.matter', $latestStudy->matter_id) }}">Lanjutkan Pelajaran</x-anchor.primary>
                                         @endif
                                     @else
                                         <x-anchor.primary class="ml-2"
-                                            href="{{ route('study.matter', $matters->first()->id) }}">Mulai Pelajaran</x-anchor.primary>
+                                            href="{{ route('study.matter', $matters->orderBy('number', 'asc')->first()->id) }}">Mulai Pelajaran</x-anchor.primary>
                                     @endif
                                 @endif
                             </div>
@@ -97,12 +106,14 @@
     	@endif
 	</div>
 
-    <div class="fixed bottom-10 right-10">
-        <x-button.primary class="text-2xl md:text-4xl lg:text-6xl rounded-full"
-            wire:click="$emit('openModal', 'chapter.modal-chapter', {{ json_encode([
-                        'language' => $language->id
-                    ]) }})">
-            <i class="fas fa-plus"></i>
-        </x-button.primary>
-    </div>
+    @if (!auth()->user()->hasRole('user'))
+        <div class="fixed bottom-10 right-10">
+            <x-button.primary class="text-2xl md:text-4xl lg:text-6xl rounded-full"
+                wire:click="$emit('openModal', 'chapter.modal-chapter', {{ json_encode([
+                            'language' => $language->id
+                        ]) }})">
+                <i class="fas fa-plus"></i>
+            </x-button.primary>
+        </div>
+    @endif
 </div>

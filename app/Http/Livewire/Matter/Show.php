@@ -22,9 +22,10 @@ class Show extends Component
 
     protected $listeners = [
         'reloadMatter' => 'reload',
-        'nextMatter' => 'next',
         'correctAnswer' => 'correctAnswer',
         'showHint' => 'showHint',
+        'showScript' => 'showScript',
+        'next' => 'next',
         'nextMatter' => 'nextMatter',
         'javaScriptAnswer' => 'javaScriptAnswer',
     ];
@@ -69,20 +70,29 @@ class Show extends Component
         $this->nextLevel = ControllersMatter::checkNextLevel();
     }
 
+    public function showScript($script) {
+        if ($this->matter->chapter->language->type!="html") {
+            $output = ControllersMatter::checkAnswer($this->matter, $script);
+            $this->emitTo('matter.shell', 'reloadShell', $output['output']);
+        } else {
+            $this->emitTo('matter.iframe', 'reloadIframe', $script);
+        }
+    }
+
     public function nextMatter($question) {
         if ($this->matter->chapter->language->type!="html") {
             $this->next($question);
         } else {
-            $this->nextHTML($question);
+            $this->emit('htmldiffer', $question, $this->matter->answer);
         }
     }
 
-    public function next($question, $hashValue=0) {
+    public function next($question, $isEq=false) {
         $levelUp="no";
         if (!empty($this->matter->instruction)) {
             $this->question = $question;
 
-            $output = ControllersMatter::checkAnswer($this->matter, $this->question, $hashValue);
+            $output = ControllersMatter::checkAnswer($this->matter, $this->question, $isEq);
 
             $study = Study::where('matter_id', $this->matter->id)->where('user_id', auth()->user()->id)->first();
             $study->update(['user_answer' => $this->question]);
@@ -121,15 +131,6 @@ class Show extends Component
             }
             $this->emit('swal', 'success', 'Yeay! Kau naik level.');
         }
-    }
-
-    public function nextHTML($question) {
-        $this->emit('javaScriptChecker', $question);
-    }
-
-    public function javaScriptAnswer($question, $hashValue) {
-        Storage::disk('local')->put('./answers/users/'.$this->matter->chapter->language->id.'/'.$this->matter->chapter->id.'/'.$this->matter->id.'/'.auth()->user()->username.'.txt', $hashValue);
-        $this->next($question, $hashValue);
     }
 
     public function correctAnswer() {

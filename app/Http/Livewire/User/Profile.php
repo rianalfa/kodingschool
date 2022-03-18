@@ -17,8 +17,8 @@ class Profile extends Component
     private $badges;
     private $languages;
 
-    public function mount($id=null) {
-        $this->user = ($id==null) ? auth()->user() : User::whereId($id)->first();
+    public function mount($username=null) {
+        $this->user = ($username==null) ? auth()->user() : User::where('username', $username)->first();
 
         $languages = Language::get();
 
