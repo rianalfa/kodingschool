@@ -7,7 +7,7 @@
             <x-card.base title="Detail">
                 <div class="grid grid-cols-4 gap-4">
                     <div class="flex flex-col content-center justify-center py-8 col-span-4 lg:col-span-1">
-                        <img class="rounded-full object-cover border-2 border-gray-300 w-32 h-32 mx-auto" src="{{ Auth::user()->profile_photo_url }}"
+                        <img class="rounded-full object-cover border-2 border-gray-300 w-32 h-32 mx-auto" src="{{ user->profile_photo_url }}"
                             alt="{{ Auth::user()->name }}" />
                         <p class="text-lg font-bold text-center mt-4 mb-0">{{ '@'.$user->username }}</p>
                         <x-badge.primary class="ml-auto mr-auto px-6 md:px-8">Lvl. {{ $user->detail->level->id }}</x-badge.primary>

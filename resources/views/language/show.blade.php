@@ -22,7 +22,8 @@
                 <div class="grid grid-cols-3 gap-4">
                     <div class="col-span-3 lg:col-span-1">
                         <div class="flex flex-col items-center justify-center bg-sky-100 rounded py-8">
-                            <img src="{{ asset('storage/images/languages/'.$chapter->language->id.'.png') }}" class="w-1/2 object-contain">
+                            <img src="{{ asset('storage/images/languages/'.$chapter->language->id.'.png') }}" class="w-1/2 object-contain"
+                                onerror="this.src='{{ asset('images/KS.png') }}'">
                             <p class="text-sky-500 font-bold mt-4">Progress</p>
                             <div class="bg-gray-200 rounded-full w-1/2">
                                 @if (!empty($progress))

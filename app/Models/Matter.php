@@ -68,4 +68,8 @@ class Matter extends Model
     public function study($userId) {
         return $this->hasOne(Study::class)->where('user_id', $userId)->first();
     }
+
+    public function benchmarks() {
+        return $this->hasMany(Benchmark::class);
+    }
 }

@@ -51,7 +51,7 @@ class CreateNewUser implements CreatesNewUsers
             'user_id' => $user->id,
         ]);
 
-        Badge::founder();
+        Badge::founder($user->id);
 
         return $user;
     }

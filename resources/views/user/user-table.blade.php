@@ -27,7 +27,11 @@
 </x-livewire-tables::table.cell>
 
 <x-livewire-tables::table.cell>
-    <x-anchor.black href="{{ route('user.profile', $row->id) }}">Detail</x-anchor.black>
+    {{ $row->email_verified_at }}
+</x-livewire-tables::table.cell>
+
+<x-livewire-tables::table.cell>
+    <x-anchor.black href="{{ route('user.profile', $row->username) }}">Detail</x-anchor.black>
 </x-livewire-tables::table.cell>
 
 <x-livewire-tables::table.cell>

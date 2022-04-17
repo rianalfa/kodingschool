@@ -12,7 +12,7 @@ use Rappasoft\LaravelLivewireTables\Views\Filter;
 class UserTable extends DataTableComponent
 {
     public string $defaultSortColumn = 'name';
-    public string $defaultSortDirection = 'desc';
+    public string $defaultSortDirection = 'asc';
 
     public function columns(): array
     {
@@ -32,6 +32,8 @@ class UserTable extends DataTableComponent
             Column::make("Created at", "created_at")
                 ->sortable(),
             Column::make("Updated at", "updated_at")
+                ->sortable(),
+            Column::make("Email Verified at", "email_verified_at")
                 ->sortable(),
             Column::make("Detail"),
             Column::make("Posisi"),

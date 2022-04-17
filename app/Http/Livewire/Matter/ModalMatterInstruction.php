@@ -3,7 +3,9 @@
 namespace App\Http\Livewire\Matter;
 
 use App\Http\Controllers\Admin;
+use App\Models\Benchmark;
 use App\Models\Matter;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -19,6 +21,7 @@ class ModalMatterInstruction extends ModalComponent
     protected $listeners = [
         'saveInsctruction' => 'saveInsctruction',
         'javaScriptAnswer' => 'javaScriptAnswer',
+        'reloadModalInstruction' => '$refresh',
     ];
 
     protected function rules() {
@@ -64,6 +67,15 @@ class ModalMatterInstruction extends ModalComponent
             $this->emit('error', 'Anda bukan admin');
         }
         $this->closeModal();
+    }
+
+    public function deleteBenchmark($benchmarkId) {
+        try {
+            Benchmark::whereId($benchmarkId)->delete();
+            $this->emit('success', 'Benchmark berhasil dihapus');
+        } catch (Exception $e) {
+            $this->emit('error', 'Benchmark gagal dihapus');
+        }
     }
 
     public static function modalMaxWidth(): string

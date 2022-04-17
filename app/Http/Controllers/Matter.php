@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Benchmark;
 use App\Models\Level;
 use App\Models\Matter as ModelsMatter;
 use App\Models\Planner;
@@ -35,6 +36,11 @@ class Matter extends Controller
                 if (empty($outputCompiler)) {
                     exec("cd .. && cd storage/app".$path." && cppcheck ".auth()->user()->username.".cpp 2>&1", $outputChecker);
                 }
+
+                if (empty($outputCompiler)) {
+                    $outputCompiler = Matter::checkBenchmark($matter->id, $content);
+                }
+
                 exec("cd .. && cd storage/app".$path." && ".auth()->user()->username.".exe", $userOutput);
                 exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && ".$matter->id.".exe", $correctOutput);
                 break;
@@ -44,6 +50,11 @@ class Matter extends Controller
                 if (empty($outputCompiler)) {
                     exec("cd .. && cd storage/app".$path." && palcmd ".auth()->user()->username.".pas 2>&1", $outputChecker);
                 }
+
+                if (empty($outputCompiler)) {
+                    $outputCompiler = Matter::checkBenchmark($matter->id, $content);
+                }
+
                 exec("cd .. && cd storage/app".$path." && ".auth()->user()->username.".exe", $userOutput);
                 exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && ".$matter->id.".exe", $correctOutput);
                 break;
@@ -53,11 +64,20 @@ class Matter extends Controller
                     exec("cd .. && cd storage/app/answers/users/".$matter->chapter->language->id." && java -jar checkstyle-9.3-all.jar -c /google_checks.xml ".$matter->chapter->id."/".$matter->id."/".auth()->user()->username.".java 2>&1", $outputChecker);
                 }
 
+                if (empty($outputCompiler)) {
+                    $outputCompiler = Matter::checkBenchmark($matter->id, $content);
+                }
+
                 exec("cd .. && cd storage/app".$path." && java ".auth()->user()->username, $userOutput);
                 exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && java java".$matter->id, $correctOutput);
                 break;
             case "php":
                 exec("cd .. && cd storage/app".$path." && psalm ".auth()->user()->username.".php 2>&1", $outputChecker);
+
+                if (empty($outputCompiler)) {
+                    $outputCompiler = Matter::checkBenchmark($matter->id, $content);
+                }
+
                 exec("cd .. && cd storage/app".$path." && php ".auth()->user()->username.".php 2>&1", $userOutput);
                 exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && php ".$matter->id.".php", $correctOutput);
                 break;
@@ -68,10 +88,16 @@ class Matter extends Controller
                     $outputCompiler[0] = auth()->user()->username.".js";
                 }
 
+                if (empty($outputCompiler)) {
+                    $outputCompiler = Matter::checkBenchmark($matter->id, $content);
+                }
+
                 exec("cd .. && cd storage/app".$path." && node ".auth()->user()->username.".js", $userOutput);
                 exec("cd .. && cd storage/app/answers/corrects/".$matter->chapter->language->id."/".$matter->chapter->id." && node ".$matter->id.".js", $correctOutput);
                 break;
             case "html":
+                $outputCompiler = Matter::checkBenchmark($matter->id, $content);
+
                 $userOutput = "true";
                 $correctOutput = $isEq==true ? "true" : "false";
                 break;
@@ -114,6 +140,17 @@ class Matter extends Controller
                 ];
             }
         }
+    }
+
+    public static function checkBenchmark($matterId, $answer) {
+        $benchmarks = Benchmark::where('matter_id', $matterId)->get();
+        foreach ($benchmarks as $benchmark) {
+            $count = substr_count($answer, $benchmark->keyword);
+            if ($count!=(int)$benchmark->number) {
+                return "Pastikan kamu menggunakan keyword '".$benchmark->keyword."' ya";
+            }
+        }
+        return "";
     }
 
     public static function correctAnswer($matterId, $userAnswer="") {
