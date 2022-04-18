@@ -192,20 +192,25 @@ class Badge extends Controller
     public static function gamer() {
         $result = Result::where('user_id', auth()->user()->id)
                         ->where('date', date('Y-m-d'))->first();
-        if ($result->point>=10000) {
-            $badgeId = ModelsBadge::where('type', '5')
-                                ->where('grade', '3')
-                                ->first()->id;
-        } elseif ($result->point>=5000) {
-            $badgeId = ModelsBadge::where('type', '5')
-                                ->where('grade', '2')
-                                ->first()->id;
-        } elseif ($result->point>=2000) {
-            $badgeId = ModelsBadge::where('type', '5')
-                                ->where('grade', '1')
-                                ->first()->id;
+
+        if (!empty($result)) {
+            if ($result->point>=10000) {
+                $badgeId = ModelsBadge::where('type', '5')
+                                    ->where('grade', '3')
+                                    ->first()->id;
+            } elseif ($result->point>=5000) {
+                $badgeId = ModelsBadge::where('type', '5')
+                                    ->where('grade', '2')
+                                    ->first()->id;
+            } elseif ($result->point>=2000) {
+                $badgeId = ModelsBadge::where('type', '5')
+                                    ->where('grade', '1')
+                                    ->first()->id;
+            } else {
+                $badgeId = 9999;
+            }
         } else {
-            $badgeId = 9999;
+            return null;
         }
 
         $badge = AchievedBadge::where('user_id', auth()->user()->id)

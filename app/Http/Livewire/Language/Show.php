@@ -42,6 +42,7 @@ class Show extends Component
         $this->activeChapter = $id;
         $this->emitTo('chapter.show', 'reloadChapter', $id);
         $this->emitTo('matter.grid', 'reloadMatters', $id);
+        $this->emit('goToTop');
     }
 
     public function render()

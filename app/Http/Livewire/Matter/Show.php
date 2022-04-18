@@ -181,6 +181,20 @@ class Show extends Component
         }
     }
 
+    public function previous() {
+        $this->matter = Matter::previous($this->matter->number, $this->matter->chapter_id);
+        if ($this->matter->instruction==null) $this->matter->instruction="";
+
+        $study = Study::where('user_id', auth()->user()->id)->where('matter_id', $this->matter->id)->first();
+        $this->question = !empty($study->user_answer) ? $study->user_answer : $this->matter->question;
+
+        $this->initiateViewer();
+        if (!empty($this->matter->instruction)) $this->initiateCodeEditor();
+
+        $this->emitTo('matter.question', 'reloadQuestion', $this->matter->id);
+        $this->reload($this->matter->id);
+    }
+
     public function render()
     {
         return view('matter.show')

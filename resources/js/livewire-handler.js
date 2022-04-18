@@ -101,6 +101,14 @@ const notification = require("notyf");
         });
 
         isEq = htmlDiffer.isEqual(html1, html2);
-        console.log(isEq);
         Livewire.emit('next', html1, isEq);
+    });
+
+//Go to top page
+    Livewire.on('goToTop', () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
     });

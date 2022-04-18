@@ -14,7 +14,7 @@
         </div>
 
         @if (!empty($matter->instruction))
-            <div class="col-span-3 lg:col-span-1 h-80 lg:h-full overflow-y-hidden" wire:ignore>
+            <div class="col-span-3 lg:col-span-1 h-80 lg:h-full overflow-y-hidden">
                 <x-input.textarea id="code" wire:model.defer="question" wire:init="initiateCodeEditor"></x-input.textarea>
             </div>
         @endif
@@ -34,7 +34,7 @@
             @if (in_array($matter->chapter->language->type, ['pas', 'cpp', 'java', 'js', 'php']))
                 @livewire('matter.shell', ['text' => ''])
             @else
-                    @livewire('matter.iframe', ['text' => $question])
+                @livewire('matter.iframe', ['text' => $question])
             @endif
         </div>
     </div>
@@ -56,8 +56,8 @@
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-between lg:justify-end col-span-3 lg:col-span-1 my-1 lg:my-0" wire:ignore>
-                <div x-data="{ open: false }" class="relative">
+            <div class="flex flex-wrap items-center justify-between lg:justify-end col-span-3 lg:col-span-1 my-1 lg:my-0" wire:ignore>
+                <div x-data="{ open: false }" class="relative mt-2 lg:mt-0">
                     <ul x-show="open" @click.away="open = false" class="bg-white rounded absolute bottom-6 left-0 lg:right-0 w-48 p-2">
                         <li><p class="text-sm">Apakah Anda yakin ingin melihat hint jawaban?</p></li>
                         <li class="flex justify-end mt-2"><x-button.warning class="text-sm ml-auto py-0"
@@ -69,11 +69,15 @@
                     <x-button.warning @click="open = true" class="py-1">Lihat Hint</x-button.warning>
                 </div>
 
-                <x-button.primary class="py-1 ml-2" wire:click="$emit('runScript')">
+                <x-button.primary class="mt-2 lg:mt-0 lg:ml-2 py-1" wire:click="$emit('runScript')">
                     Run Script
                 </x-button.primary>
 
-                <x-button.white class="py-1 ml-2" wire:click="$emit('saveCodeEditor')">
+                <x-button.black class="mt-2 lg:mt-0 lg:ml-2 py-1" wire:click="previous">
+                    Previous
+                </x-button.black>
+
+                <x-button.white class="mt-2 lg:mt-0 lg:ml-2 py-1" wire:click="$emit('saveCodeEditor')">
                     Next
                 </x-button.white>
             </div>

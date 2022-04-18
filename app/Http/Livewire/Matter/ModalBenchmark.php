@@ -40,6 +40,11 @@ class ModalBenchmark extends ModalComponent
         $this->closeModal();
     }
 
+    public static function destroyOnClose(): bool
+    {
+        return true;
+    }
+
     public function render()
     {
         return view('matter.modal-benchmark');

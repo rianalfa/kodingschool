@@ -14,10 +14,6 @@
                         wire:click="$emit('openModal', 'language.modal-language', {{ json_encode(['id' => $language->id]) }})">
                         Edit
                     </x-button.white>
-                    <x-button.white class="text-red-500 text-left border-0 w-full btn-dropdown"
-                        wire:click="$emit('openModal', 'language.modal-delete', {{ json_encode(['id' => $language->id]) }})">
-                        Delete
-                    </x-button.white>
                 </x-slot>
             </x-jet-dropdown>
         @endif
